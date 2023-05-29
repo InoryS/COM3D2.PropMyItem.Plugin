@@ -29,6 +29,7 @@ namespace COM3D2.PropMyItem.Plugin
     [BepInPlugin(PluginInfo.PluginName, PluginInfo.PluginName, PluginInfo.PluginVersion)]
     public class PropMyItem : BaseUnityPlugin //: PluginBase
     {
+
         // Token: 0x0600002B RID: 43 RVA: 0x000030EC File Offset: 0x000012EC
 
         private ConfigEntry<KeyboardShortcut> ShowCounter { get; set; }
@@ -303,25 +304,89 @@ namespace COM3D2.PropMyItem.Plugin
             }
         }
 
+    private Rect _windowRect;
+    private bool _isResizing;
+    private Vector2 _resizeStartPosition;
+
+
         // Token: 0x0600002F RID: 47 RVA: 0x00003A88 File Offset: 0x00001C88
         public void OnGUI()
+        
+       
         {
-            if (!this._isVisible)
+            if (!_isVisible)
             {
                 return;
             }
-            if (this._isShowSetting)
+
+            if (_isShowSetting)
             {
-                this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiSettingFunc), "PropMyItem", GuiStyles.WindowStyle);
+                _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect, GuiSettingFunc, "PropMyItem", GuiStyles.WindowStyle);
                 return;
             }
-            if (this._isShowFilterSetting)
+
+            if (_isShowFilterSetting)
             {
-                this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiFilterSettingFunc), "PropMyItem", GuiStyles.WindowStyle);
+                _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect, GuiFilterSettingFunc, "PropMyItem", GuiStyles.WindowStyle);
                 return;
             }
-            this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiFunc), "PropMyItem", GuiStyles.WindowStyle);
+
+            // 绘制窗口并启用窗口调整功能
+            _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect, GuiFunc, "PropMyItem", GuiStyles.WindowStyle);
+            HandleWindowResize();
         }
+        
+            private void GuiFunc(int windowID)
+    {
+        // 在窗口内部绘制 GUI 元素
+
+        GUI.DragWindow();
+        }
+
+        private void HandleWindowResize()
+        {
+            if (Event.current.type == EventType.MouseDown)
+            {
+                // 获取鼠标位置
+                Vector2 mousePosition = Event.current.mousePosition;
+
+                // 检查鼠标是否位于窗口的右下角边界区域
+                Rect resizeHandleRect = new Rect(_windowRect.width - 20, _windowRect.height - 20, 20, 20);
+                if (resizeHandleRect.Contains(mousePosition))
+                {
+                    // 开始调整窗口大小
+                    _isResizing = true;
+                    _resizeStartPosition = mousePosition;
+                }
+            }
+            else if (Event.current.type == EventType.MouseUp)
+            {
+                // 停止调整窗口大小
+                _isResizing = false;
+            }
+
+            if (_isResizing)
+            {
+                // 获取鼠标当前位置
+                Vector2 currentMousePosition = Event.current.mousePosition;
+
+                // 计算鼠标位置相对于窗口起始位置的偏移量
+                Vector2 resizeOffset = currentMousePosition - _resizeStartPosition;
+
+                // 调整窗口大小
+                _windowRect.width += resizeOffset.x;
+                _windowRect.height += resizeOffset.y;
+
+                // 更新起始位置
+                _resizeStartPosition = currentMousePosition;
+
+                // 防止窗口大小小于某个最小值（可根据需要进行调整）
+                _windowRect.width = Mathf.Max(_windowRect.width, 200);
+                _windowRect.height = Mathf.Max(_windowRect.height, 200);
+            }
+        }
+    }
+        
 
         // Token: 0x06000030 RID: 48 RVA: 0x00003B40 File Offset: 0x00001D40
         private void GuiSettingFunc(int windowID)
