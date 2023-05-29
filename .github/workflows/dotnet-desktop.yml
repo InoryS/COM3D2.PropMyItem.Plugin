@@ -21,10 +21,6 @@ jobs:
           sudo apt-get install -y msbuild
           echo "msbuild: $(which msbuild)"
 
-      - name: Restore NuGet packages
-        run: |
-          nuget restore COM3D2.PropMyItem.Plugin.sln
-
       - name: Build
         run: |
           msbuild /p:Configuration=Release /p:TargetFrameworkVersion=v3.5 COM3D2.PropMyItem.Plugin.sln
