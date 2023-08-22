@@ -1590,6 +1590,12 @@ namespace COM3D2.PropMyItem.Plugin
                         }
                     }
                 }
+                // Display item name label next to the button
+                GUILayout.BeginVertical();
+                GUILayout.Label(menuInfo.ItemName, GuiStyles.LabelStyle);
+                GUILayout.EndVertical();
+
+
                 GUI.enabled = true;
                 goto IL_101;
             }
@@ -1667,6 +1673,14 @@ namespace COM3D2.PropMyItem.Plugin
                             visibleMaidList2[this._selectedMaid].AllProcProp();
                         }
                     }
+
+
+                    // Display item name label next to the button
+                    GUILayout.BeginVertical();
+                    GUILayout.Label(menuInfo.ItemName, GuiStyles.LabelStyle);
+                    GUILayout.EndVertical();
+
+
                     GUI.enabled = true;
                     goto IL_11C;
                 }
