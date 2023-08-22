@@ -306,16 +306,18 @@ namespace COM3D2.PropMyItem.Plugin
         // Token: 0x0600002F RID: 47 RVA: 0x00003A88 File Offset: 0x00001C88
         public void OnGUI()
         {
+
+            // Calculate the new window size
+            float newWidth = 400; // You can adjust this value as needed
+            float newHeight = 300; // You can adjust this value as needed
+
+
             if (!this._isVisible)
             {
                 return;
             }
             if (this._isShowSetting)
             {
-                // Calculate the new window size
-                float newWidth = 400; // You can adjust this value as needed
-                float newHeight = 300; // You can adjust this value as needed
-
                 // Update the windowRect size
                 this._windowRect.width = newWidth;
                 this._windowRect.height = newHeight;
@@ -329,10 +331,6 @@ namespace COM3D2.PropMyItem.Plugin
             }
             if (this._isShowFilterSetting)
             {
-                // Calculate the new window size
-                float newWidth = 400; // You can adjust this value as needed
-                float newHeight = 300; // You can adjust this value as needed
-
                 // Update the windowRect size
                 this._windowRect.width = newWidth;
                 this._windowRect.height = newHeight;
@@ -344,9 +342,6 @@ namespace COM3D2.PropMyItem.Plugin
                 this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiFilterSettingFunc), "PropMyItem", GuiStyles.WindowStyle);
                 return;
             }
-            // Calculate the new window size
-            float newWidth = 400; // You can adjust this value as needed
-            float newHeight = 300; // You can adjust this value as needed
 
             // Update the windowRect size
             this._windowRect.width = newWidth;
