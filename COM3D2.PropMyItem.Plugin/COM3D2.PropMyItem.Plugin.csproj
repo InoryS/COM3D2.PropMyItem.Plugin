@@ -49,7 +49,7 @@
       <HintPath>..\packages\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil.Mdb">
-      <HintPath>..\packagesMono.Cecil.Mdb.dll</HintPath>
+      <HintPath>..\packages\Mono.Cecil.Mdb.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil.Pdb">
       <HintPath>..\packages\Mono.Cecil.Pdb.dll</HintPath>
