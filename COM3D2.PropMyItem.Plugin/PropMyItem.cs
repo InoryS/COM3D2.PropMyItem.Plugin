@@ -308,8 +308,8 @@ namespace COM3D2.PropMyItem.Plugin
         {
 
             // Calculate the new window size
-            float newWidth = 400; // You can adjust this value as needed
-            float newHeight = 300; // You can adjust this value as needed
+            float newWidth = 800; // You can adjust this value as needed
+            float newHeight = 600; // You can adjust this value as needed
 
 
             if (!this._isVisible)
