@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,7 +29,6 @@ namespace COM3D2.PropMyItem.Plugin
     [BepInPlugin(PluginInfo.PluginName, PluginInfo.PluginName, PluginInfo.PluginVersion)]
     public class PropMyItem : BaseUnityPlugin //: PluginBase
     {
-
         // Token: 0x0600002B RID: 43 RVA: 0x000030EC File Offset: 0x000012EC
 
         private ConfigEntry<KeyboardShortcut> ShowCounter { get; set; }
@@ -252,7 +251,7 @@ namespace COM3D2.PropMyItem.Plugin
                 //PropMyItem.Log.LogMessage($"input key {ShowCounter.Value.Modifiers} {ShowCounter.Value.MainKey}");
                 if (ShowCounter.Value.IsUp())
                 {
-                    
+
                     if (_menuFilesReady)
                     {
                         this._isVisible = !this._isVisible;
@@ -296,7 +295,7 @@ namespace COM3D2.PropMyItem.Plugin
                         GameMain.Instance.MainCamera.SetControl(true);
                     }
                 }
-                
+
             }
             catch (Exception e)
             {
@@ -304,89 +303,25 @@ namespace COM3D2.PropMyItem.Plugin
             }
         }
 
-    private Rect _windowRect;
-    private bool _isResizing;
-    private Vector2 _resizeStartPosition;
-
-
         // Token: 0x0600002F RID: 47 RVA: 0x00003A88 File Offset: 0x00001C88
         public void OnGUI()
-        
-       
         {
-            if (!_isVisible)
+            if (!this._isVisible)
             {
                 return;
             }
-
-            if (_isShowSetting)
+            if (this._isShowSetting)
             {
-                _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect, GuiSettingFunc, "PropMyItem", GuiStyles.WindowStyle);
+                this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiSettingFunc), "PropMyItem", GuiStyles.WindowStyle);
                 return;
             }
-
-            if (_isShowFilterSetting)
+            if (this._isShowFilterSetting)
             {
-                _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect, GuiFilterSettingFunc, "PropMyItem", GuiStyles.WindowStyle);
+                this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiFilterSettingFunc), "PropMyItem", GuiStyles.WindowStyle);
                 return;
             }
-
-            // 绘制窗口并启用窗口调整功能
-            _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect, GuiFunc, "PropMyItem", GuiStyles.WindowStyle);
-            HandleWindowResize();
+            this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiFunc), "PropMyItem", GuiStyles.WindowStyle);
         }
-        
-            private void GuiFunc(int windowID)
-    {
-        // 在窗口内部绘制 GUI 元素
-
-        GUI.DragWindow();
-        }
-
-        private void HandleWindowResize()
-        {
-            if (Event.current.type == EventType.MouseDown)
-            {
-                // 获取鼠标位置
-                Vector2 mousePosition = Event.current.mousePosition;
-
-                // 检查鼠标是否位于窗口的右下角边界区域
-                Rect resizeHandleRect = new Rect(_windowRect.width - 20, _windowRect.height - 20, 20, 20);
-                if (resizeHandleRect.Contains(mousePosition))
-                {
-                    // 开始调整窗口大小
-                    _isResizing = true;
-                    _resizeStartPosition = mousePosition;
-                }
-            }
-            else if (Event.current.type == EventType.MouseUp)
-            {
-                // 停止调整窗口大小
-                _isResizing = false;
-            }
-
-            if (_isResizing)
-            {
-                // 获取鼠标当前位置
-                Vector2 currentMousePosition = Event.current.mousePosition;
-
-                // 计算鼠标位置相对于窗口起始位置的偏移量
-                Vector2 resizeOffset = currentMousePosition - _resizeStartPosition;
-
-                // 调整窗口大小
-                _windowRect.width += resizeOffset.x;
-                _windowRect.height += resizeOffset.y;
-
-                // 更新起始位置
-                _resizeStartPosition = currentMousePosition;
-
-                // 防止窗口大小小于某个最小值（可根据需要进行调整）
-                _windowRect.width = Mathf.Max(_windowRect.width, 200);
-                _windowRect.height = Mathf.Max(_windowRect.height, 200);
-            }
-        }
-    }
-        
 
         // Token: 0x06000030 RID: 48 RVA: 0x00003B40 File Offset: 0x00001D40
         private void GuiSettingFunc(int windowID)
@@ -1057,7 +992,7 @@ namespace COM3D2.PropMyItem.Plugin
             float num7 = num6;
             int num8 = itemList.Count;
             int num9 = 0;
-            if (this._selectedMPN == MPN.set_maidwear || this._selectedMPN == MPN.set_mywear || this._selectedMPN == MPN.set_underwear|| this._selectedMPN == MPN.set_body)
+            if (this._selectedMPN == MPN.set_maidwear || this._selectedMPN == MPN.set_mywear || this._selectedMPN == MPN.set_underwear || this._selectedMPN == MPN.set_body)
             {
                 num6 = 75f;
                 num7 = num6 * 1.44f;
@@ -1114,7 +1049,7 @@ namespace COM3D2.PropMyItem.Plugin
                         menuInfo.IsHave = false;
                     }
                 }
-                IL_1DC:;
+            IL_1DC:;
             }
             num8 -= num9;
             int num10 = ((float)num8 % num4 == 0f) ? 0 : 1;
@@ -1221,7 +1156,7 @@ namespace COM3D2.PropMyItem.Plugin
                             MenuInfo menuInfo4 = MenuModParser.parseMod(menuInfo2.FilePath);
                             menuInfo2.Icon = menuInfo4.Icon;
                         }
-                        IL_632:
+                    IL_632:
                         string tooltip = menuInfo2.ItemName;
                         if (this._folders[this._selectedFolder].Name == "全て" || this._folders[this._selectedFolder].Name == "選択中")
                         {
@@ -1425,7 +1360,7 @@ namespace COM3D2.PropMyItem.Plugin
                                         {
                                             visibleMaidList3[this._selectedMaid].SetProp(menuInfo2.ColorSetMPN, menuInfo6.FileName, Path.GetFileName(menuInfo6.FileName).GetHashCode(), false, false);
                                         }
-                                        
+
                                     }
                                     if (isAllMaid)
                                     {
@@ -1438,7 +1373,7 @@ namespace COM3D2.PropMyItem.Plugin
                                     {
                                         visibleMaidList3[this._selectedMaid].AllProcProp();
                                     }
-                                    
+
                                 }
                             }
                             GUI.enabled = true;
@@ -1447,7 +1382,7 @@ namespace COM3D2.PropMyItem.Plugin
                         if (count > 1)
                         {
                             Rect position6 = new Rect(position2.x + position2.width - num, position2.y + num3, 10f, 10f);
-                            if (menuInfo2.MPN == MPN.set_maidwear || menuInfo2.MPN == MPN.set_mywear || menuInfo2.MPN == MPN.set_underwear|| menuInfo2.MPN == MPN.set_body)
+                            if (menuInfo2.MPN == MPN.set_maidwear || menuInfo2.MPN == MPN.set_mywear || menuInfo2.MPN == MPN.set_underwear || menuInfo2.MPN == MPN.set_body)
                             {
                                 position6 = new Rect(position2.x + position2.width - num2, position2.y + num3, 10f, 10f);
                             }
@@ -1585,10 +1520,10 @@ namespace COM3D2.PropMyItem.Plugin
                     goto IL_10A;
                 }
                 goto IL_10A;
-                IL_101:
+            IL_101:
                 i++;
                 continue;
-                IL_10A:
+            IL_10A:
                 string tooltip = menuInfo.ItemName;
                 if (this._folders[this._selectedFolder].Name == "全て" || this._folders[this._selectedFolder].Name == "選択中")
                 {
@@ -1669,10 +1604,10 @@ namespace COM3D2.PropMyItem.Plugin
                         goto IL_125;
                     }
                     goto IL_125;
-                    IL_11C:
+                IL_11C:
                     i++;
                     continue;
-                    IL_125:
+                IL_125:
                     if (!string.IsNullOrEmpty(value) && menuInfo.FileName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         if (menuInfo.FileName.IndexOf("mugen", StringComparison.OrdinalIgnoreCase) != -1)
@@ -1786,13 +1721,13 @@ namespace COM3D2.PropMyItem.Plugin
                     }
                     parts_COLOR = MaidParts.PARTS_COLOR.SKIN;
                     goto IL_189;
-                    IL_F8:
+                IL_F8:
                     parts_COLOR = MaidParts.PARTS_COLOR.UNDER_HAIR;
                     goto IL_189;
-                    IL_100:
+                IL_100:
                     parts_COLOR = MaidParts.PARTS_COLOR.EYE_BROW;
                     goto IL_189;
-                    IL_108:
+                IL_108:
                     string text = string.Empty;
                     if (this._selectedEyeClorType == 0)
                     {
@@ -1814,7 +1749,7 @@ namespace COM3D2.PropMyItem.Plugin
                         this._selectedEyeClorType = ((this._selectedEyeClorType == 2) ? 0 : (this._selectedEyeClorType + 1));
                     }
                     num = controlHeight + 8f + posY;
-                    IL_189:
+                IL_189:
                     MaidParts.PartsColor partsColor = maid.Parts.GetPartsColor(parts_COLOR);
                     string[] array = new string[]
                     {
@@ -2481,3 +2416,4 @@ namespace COM3D2.PropMyItem.Plugin
         }
     }
 }
+
