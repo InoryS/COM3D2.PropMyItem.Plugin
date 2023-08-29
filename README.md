@@ -1,4 +1,4 @@
-COM3D2.PropMyItem.Plugin
+# COM3D2.PropMyItem.Plugin
 
 This plugin is made by habeebweeb, release at https://git.coder.horse/habeebweeb/COM3D2.PropMyItem.Plugin/src/master/COM3D2.PropMyItem.Plugin, Which include source code but no license included, and you can find original description there.
 
@@ -13,7 +13,8 @@ NO QA. Just random code.
 
 If you alse want it, just go 'Actions' to download.
 
-Plguin Info
+
+# Plguin Info
 This is Bepinex plugin for COM3D2.
 
 install to COM3D2\BepInEx\plugins\
