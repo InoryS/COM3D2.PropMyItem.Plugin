@@ -181,9 +181,9 @@ namespace COM3D2.PropMyItem.Plugin
         public void Awake()
         {
             Log = Logger;
-            PropMyItem.Log.LogMessage("Awake");
+            PropMyItem.Log.LogMessage("[PropMyItem] Awake");
 
-            ShowCounter = Config.Bind("Hotkeys", "Show FPS counter", new KeyboardShortcut(KeyCode.I, KeyCode.LeftShift));
+            ShowCounter = Config.Bind("Hotkeys", "Show GUI", new KeyboardShortcut(KeyCode.B));
         }
 
         private System.Collections.IEnumerator CheckMenuDatabase()
@@ -193,12 +193,12 @@ namespace COM3D2.PropMyItem.Plugin
             _menuFilesReady = true;
             _isLoading = true;
             task = Task.Factory.StartNew(() => this.LoadMenuFiles());
-            PropMyItem.Log.LogMessage("Menu files are ready");
+            PropMyItem.Log.LogMessage("[PropMyItem] Menu files are ready");
         }
 
         public void Start()
         {
-            PropMyItem.Log.LogMessage("Start");
+            PropMyItem.Log.LogMessage("[PropMyItem] Start");
             GameMain.Instance.StartCoroutine(CheckMenuDatabase());
             SceneManager.sceneLoaded += this.OnSceneLoaded;
             //try
@@ -248,7 +248,7 @@ namespace COM3D2.PropMyItem.Plugin
                     && UserConfig.Instance.IsShiftKey == IsModKey(ModKey.Shift) && Input.GetKeyDown(keyCode)
                 )
                 */
-                //PropMyItem.Log.LogMessage($"input key {ShowCounter.Value.Modifiers} {ShowCounter.Value.MainKey}");
+                //PropMyItem.Log.LogMessage($"[PropMyItem] input key {ShowCounter.Value.Modifiers} {ShowCounter.Value.MainKey}");
                 if (ShowCounter.Value.IsUp())
                 {
 
@@ -259,7 +259,7 @@ namespace COM3D2.PropMyItem.Plugin
                     }
                     else
                     {
-                        PropMyItem.Log.LogMessage("Menu files are not ready yet");
+                        PropMyItem.Log.LogMessage("[PropMyItem] Menu files are not ready yet");
                     }
                 }
                 else
@@ -269,7 +269,7 @@ namespace COM3D2.PropMyItem.Plugin
                 {
                     if (_isLoading)
                     {
-                        Console.Write("_isLoading...");
+                        Console.Write("[PropMyItem] _isLoading...");
                         //return;
                     }
                     else
@@ -419,7 +419,7 @@ namespace COM3D2.PropMyItem.Plugin
                 _isForcedInit = true;
                 if (_isLoading)
                 {
-                    PropMyItem.Log.LogMessage("_isLoading...");
+                    PropMyItem.Log.LogMessage("[PropMyItem] _isLoading...");
                     //return;
                 }
                 else
@@ -687,7 +687,7 @@ namespace COM3D2.PropMyItem.Plugin
                             maid.AllProcProp();
                             if (UserConfig.Instance.IsOutputInfoLog)
                             {
-                                PropMyItem.Log.LogMessage($"change item = {mpn} , {fileName}");
+                                PropMyItem.Log.LogMessage($"[PropMyItem] change item = {mpn} , {fileName}");
                             }
                             return;
                         }
@@ -1211,7 +1211,7 @@ namespace COM3D2.PropMyItem.Plugin
                                 {
                                     if (UserConfig.Instance.IsOutputInfoLog)
                                     {
-                                        PropMyItem.Log.LogMessage("change item = " + menuInfo2.FileName);
+                                        PropMyItem.Log.LogMessage("[PropMyItem] change item = " + menuInfo2.FileName);
                                     }
                                     if (isAllMaid)
                                     {
@@ -1359,7 +1359,7 @@ namespace COM3D2.PropMyItem.Plugin
                                 {
                                     if (UserConfig.Instance.IsOutputInfoLog)
                                     {
-                                        PropMyItem.Log.LogMessage("change item = " + menuInfo2.FileName);
+                                        PropMyItem.Log.LogMessage("[PropMyItem] change item = " + menuInfo2.FileName);
                                     }
 
                                     if (isAllMaid)
@@ -1586,7 +1586,7 @@ namespace COM3D2.PropMyItem.Plugin
 
                         if (UserConfig.Instance.IsOutputInfoLog)
                         {
-                            PropMyItem.Log.LogMessage("change item = " + menuInfo.FileName);
+                            PropMyItem.Log.LogMessage("[PropMyItem] change item = " + menuInfo.FileName);
                         }
                     }
                 }
@@ -1899,7 +1899,7 @@ namespace COM3D2.PropMyItem.Plugin
         // Token: 0x06000042 RID: 66 RVA: 0x00006D8C File Offset: 0x00004F8C
         public void LoadMenuFiles(bool isInit = false)
         {
-            PropMyItem.Log.LogMessage("LoadMenuFiles...st");
+            PropMyItem.Log.LogMessage("[PropMyItem] LoadMenuFiles...st");
             try
             {
                 List<SMenuInfo> menuItems = new List<SMenuInfo>(); //COM3D2.PropMyItem.Plugin.Config.Instance.MenuItems;//new List<SMenuInfo>();
@@ -1932,7 +1932,7 @@ namespace COM3D2.PropMyItem.Plugin
                 //IL_CA:
                 if (dictionary.Count == 0)
                 {
-                    PropMyItem.Log.LogMessage("準備中...");
+                    PropMyItem.Log.LogMessage("[PropMyItem] 準備中...");
                 }
                 Dictionary<string, string> dictionary2 = new Dictionary<string, string>();
                 foreach (string text in UserConfig.Instance.FavList)
@@ -1951,11 +1951,11 @@ namespace COM3D2.PropMyItem.Plugin
                     }
                 }
                 List<MenuInfo> list = new List<MenuInfo>();
-                PropMyItem.Log.LogMessage("完了1 " + menuItems.Count);
+                PropMyItem.Log.LogMessage("[PropMyItem] 完了1 " + menuItems.Count);
                 this.GetMainMenuFiles(ref list, dictionary, dictionary2, dictionary3, ref menuItems);
-                PropMyItem.Log.LogMessage("完了2 " + menuItems.Count);
+                PropMyItem.Log.LogMessage("[PropMyItem] 完了2 " + menuItems.Count);
                 this.GetModFiles(ref list, dictionary, dictionary2, dictionary3, ref menuItems);// 여기서 에러남
-                PropMyItem.Log.LogMessage("完了3 " + menuItems.Count);
+                PropMyItem.Log.LogMessage("[PropMyItem] 完了3 " + menuItems.Count);
                 this.SetVariationMenu(dictionary2, dictionary3, ref list);
                 this.sort(false, true);
                 this.setColorSet();
@@ -1963,7 +1963,7 @@ namespace COM3D2.PropMyItem.Plugin
                 COM3D2.PropMyItem.Plugin.Config.Instance.Save();
                 if (dictionary.Count == 0)
                 {
-                    PropMyItem.Log.LogMessage("完了");
+                    PropMyItem.Log.LogMessage("[PropMyItem] 完了");
                 }
                 this._selectedFolder = 0;
                 this._selectedMPN = MPN.null_mpn;
@@ -1987,8 +1987,8 @@ namespace COM3D2.PropMyItem.Plugin
             }
             _isLoading = false;
             _isForcedInit = false;
-            PropMyItem.Log.LogMessage("LoadMenuFiles...ed " + COM3D2.PropMyItem.Plugin.Config.Instance.MenuItems.Count);
-            PropMyItem.Log.LogMessage("LoadMenuFiles...ed " + this._mpnMenuListDictionary.Count);
+            PropMyItem.Log.LogMessage("[PropMyItem] LoadMenuFiles...ed " + COM3D2.PropMyItem.Plugin.Config.Instance.MenuItems.Count);
+            PropMyItem.Log.LogMessage("[PropMyItem] LoadMenuFiles...ed " + this._mpnMenuListDictionary.Count);
         }
 
         // Token: 0x06000043 RID: 67 RVA: 0x00007088 File Offset: 0x00005288
@@ -2058,7 +2058,7 @@ namespace COM3D2.PropMyItem.Plugin
 
             MenuDataBase menuDataBase = GameMain.Instance.MenuDataBase;
 
-            PropMyItem.Log.LogMessage("PropMyItem.GetMainMenuFiles1 " + saveItems.Count);
+            PropMyItem.Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles1 " + saveItems.Count);
             // foreach (string text2 in menuFiles)
             for (int j = 0; j < menuDataBase.GetDataSize(); j++)
             {
@@ -2066,14 +2066,14 @@ namespace COM3D2.PropMyItem.Plugin
                 string menuFileName = menuDataBase.GetMenuFileName();
                 this.ParseMainMenuFile(menuFileName, list, ref variationMenuList, loadItems, dictionary, favDic, colorLockDic, ref saveItems);
             }
-            PropMyItem.Log.LogMessage("PropMyItem.GetMainMenuFiles2 " + saveItems.Count);
-            PropMyItem.Log.LogMessage("PropMyItem.GetMainMenuFiles2 " + saveItems[saveItems.Count - 1].FileName);
+            PropMyItem.Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles2 " + saveItems.Count);
+            PropMyItem.Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles2 " + saveItems[saveItems.Count - 1].FileName);
             foreach (string menuFile in GameUty.ModOnlysMenuFiles)
             {
                 ParseMainMenuFile(menuFile, list, ref variationMenuList, loadItems, dictionary, favDic, colorLockDic, ref saveItems);
             }
-            PropMyItem.Log.LogMessage("PropMyItem.GetMainMenuFiles3 " + saveItems.Count);
-            PropMyItem.Log.LogMessage("PropMyItem.GetMainMenuFiles3 " + saveItems[saveItems.Count - 1].FileName);
+            PropMyItem.Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles3 " + saveItems.Count);
+            PropMyItem.Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles3 " + saveItems[saveItems.Count - 1].FileName);
         }
 
         // lmao
@@ -2327,7 +2327,7 @@ namespace COM3D2.PropMyItem.Plugin
 
         public void OnApplicationQuit()
         {
-            //MyLog.LogMessage("OnApplicationQuit");
+            //MyLog.LogMessage("[PropMyItem] OnApplicationQuit");
             //isTaskStop = true;
         }
 
