@@ -9,7 +9,7 @@ namespace COM3D2.PropMyItem.Plugin
         public const string PluginName = "PropMyItem-Inory";
 
         // Token: 0x04000026 RID: 38
-        public const string PluginVersion = "2.4.0.2";
+        public const string PluginVersion = "2.4.0.3";
 
         // Token: 0x04000027 RID: 39
         public const int WindowID = 4511;
