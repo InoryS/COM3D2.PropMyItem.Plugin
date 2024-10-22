@@ -41,9 +41,9 @@ namespace COM3D2.PropMyItem.Plugin
                 "眉",
                 "目",
                 "目ハイライト",
-                        "속눈썹위",
-                        "속눈썹아래",
-                        "쌍커플",
+                "속눈썹위",
+                "속눈썹아래",
+                "쌍커플",
                 "ほくろ",
                 "唇",
                 "歯"
@@ -160,7 +160,7 @@ namespace COM3D2.PropMyItem.Plugin
             this._categoryMPNDic.Add("背中", MPN.accsenaka);
             this._categoryMPNDic.Add("しっぽ", MPN.accshippo);
             this._categoryMPNDic.Add("前穴", MPN.accxxx);
-            this._categoryMPNDic.Add("メイド服", MPN.set_maidwear);//메이드복
+            this._categoryMPNDic.Add("メイド服", MPN.set_maidwear); //메이드복
             this._categoryMPNDic.Add("コスチューム", MPN.set_mywear);
             this._categoryMPNDic.Add("下着", MPN.set_underwear);
             this._categoryMPNDic.Add("체형", MPN.set_body);
@@ -168,6 +168,7 @@ namespace COM3D2.PropMyItem.Plugin
             {
                 this._menuMPNCategoryDic.Add(this._categoryMPNDic[text], text);
             }
+
             foreach (object obj in Enum.GetValues(typeof(MPN)))
             {
                 MPN key = (MPN)obj;
@@ -183,7 +184,7 @@ namespace COM3D2.PropMyItem.Plugin
             Log = Logger;
             PropMyItem.Log.LogMessage("[PropMyItem] Awake");
 
-            ShowCounter = Config.Bind("Hotkeys", "Show GUI", new KeyboardShortcut(KeyCode.B));
+            ShowCounter = Config.Bind("Hotkeys", "Show GUI", new KeyboardShortcut(KeyCode.I));
         }
 
         private System.Collections.IEnumerator CheckMenuDatabase()
@@ -207,7 +208,6 @@ namespace COM3D2.PropMyItem.Plugin
             //catch (Exception)
             //{
             //}
-
         }
 
         // Token: 0x0600002D RID: 45 RVA: 0x0000383C File Offset: 0x00001A3C
@@ -222,80 +222,7 @@ namespace COM3D2.PropMyItem.Plugin
             try
             {
                 this._autoShoesHide.Update();
-                /*
-                if (this._isPluginKeyChange && Event.current.type == EventType.KeyUp)
-                {
-                    bool control = Event.current.control;
-                    bool alt = Event.current.alt;
-                    bool shift = Event.current.shift;
-                    string text = Event.current.keyCode.ToString();
-                    if (!string.IsNullOrEmpty(text))
-                    {
-                        UserConfig.Instance.IsControlKey = control;
-                        UserConfig.Instance.IsAltKey = alt;
-                        UserConfig.Instance.IsShiftKey = shift;
-                        UserConfig.Instance.GuiVisibleKey = text.ToLower();
-                        UserConfig.Instance.Save();
-                        this._isPluginKeyChange = false;
-                        return;
-                    }
-                }
-                KeyCode keyCode = KeyCode.I;
-                    
-                if (EnumUtil.TryParse<KeyCode>(UserConfig.Instance.GuiVisibleKey, true, out keyCode)
-                    && UserConfig.Instance.IsControlKey == IsModKey(ModKey.Control)
-                    && UserConfig.Instance.IsAltKey == IsModKey(ModKey.Alt)
-                    && UserConfig.Instance.IsShiftKey == IsModKey(ModKey.Shift) && Input.GetKeyDown(keyCode)
-                )
-                */
-                //PropMyItem.Log.LogMessage($"[PropMyItem] input key {ShowCounter.Value.Modifiers} {ShowCounter.Value.MainKey}");
-                if (ShowCounter.Value.IsUp())
-                {
-
-                    if (_menuFilesReady)
-                    {
-                        this._isVisible = !this._isVisible;
-                        this._isMinimum = !this._isVisible;
-                    }
-                    else
-                    {
-                        PropMyItem.Log.LogMessage("[PropMyItem] Menu files are not ready yet");
-                    }
-                }
-                else
-                {
-                    /*
-                if (this._isVisible && (_isForcedInit))
-                {
-                    if (_isLoading)
-                    {
-                        Console.Write("[PropMyItem] _isLoading...");
-                        //return;
-                    }
-                    else
-                    {
-                        _isLoading = true;
-                        task = Task.Factory.StartNew(() => this.LoadMenuFiles(_isForcedInit));
-                    }
-                    //this._isStartUpLoadead = true;
-                    //this.LoadMenuFiles(this._isForcedInit);
-                    //this._isForcedInit = false;
-                }
-                    */
-                    if (this._isVisible && this._windowRect.Contains(new Vector2(Input.mousePosition.x, (float)Screen.height - Input.mousePosition.y)))
-                    {
-                        GameMain.Instance.MainCamera.SetControl(false);
-                        if (Event.current.type != EventType.KeyDown && Event.current.type != EventType.KeyUp)
-                        {
-                            Input.ResetInputAxes();
-                        }
-                    }
-                    else if (!GameMain.Instance.MainCamera.GetControl())
-                    {
-                        GameMain.Instance.MainCamera.SetControl(true);
-                    }
-                }
-
+                this.ShowCounterHandler();
             }
             catch (Exception e)
             {
@@ -303,19 +230,97 @@ namespace COM3D2.PropMyItem.Plugin
             }
         }
 
+
+        private void ShowCounterHandler()
+        {
+            /*
+if (this._isPluginKeyChange && Event.current.type == EventType.KeyUp)
+{
+    bool control = Event.current.control;
+    bool alt = Event.current.alt;
+    bool shift = Event.current.shift;
+    string text = Event.current.keyCode.ToString();
+    if (!string.IsNullOrEmpty(text))
+    {
+        UserConfig.Instance.IsControlKey = control;
+        UserConfig.Instance.IsAltKey = alt;
+        UserConfig.Instance.IsShiftKey = shift;
+        UserConfig.Instance.GuiVisibleKey = text.ToLower();
+        UserConfig.Instance.Save();
+        this._isPluginKeyChange = false;
+        return;
+    }
+}
+KeyCode keyCode = KeyCode.I;
+
+if (EnumUtil.TryParse<KeyCode>(UserConfig.Instance.GuiVisibleKey, true, out keyCode)
+    && UserConfig.Instance.IsControlKey == IsModKey(ModKey.Control)
+    && UserConfig.Instance.IsAltKey == IsModKey(ModKey.Alt)
+    && UserConfig.Instance.IsShiftKey == IsModKey(ModKey.Shift) && Input.GetKeyDown(keyCode)
+)
+*/
+            //PropMyItem.Log.LogMessage($"[PropMyItem] input key {ShowCounter.Value.Modifiers} {ShowCounter.Value.MainKey}");
+            if (ShowCounter.Value.IsUp())
+            {
+                if (_menuFilesReady)
+                {
+                    this._isVisible = !this._isVisible;
+                    this._isMinimum = !this._isVisible;
+                }
+                else
+                {
+                    PropMyItem.Log.LogMessage("[PropMyItem] Menu files are not ready yet");
+                }
+            }
+            else
+            {
+                /*
+            if (this._isVisible && (_isForcedInit))
+            {
+                if (_isLoading)
+                {
+                    Console.Write("[PropMyItem] _isLoading...");
+                    //return;
+                }
+                else
+                {
+                    _isLoading = true;
+                    task = Task.Factory.StartNew(() => this.LoadMenuFiles(_isForcedInit));
+                }
+                //this._isStartUpLoadead = true;
+                //this.LoadMenuFiles(this._isForcedInit);
+                //this._isForcedInit = false;
+            }
+                */
+                if (this._isVisible && this._windowRect.Contains(new Vector2(Input.mousePosition.x,
+                        (float)Screen.height - Input.mousePosition.y)))
+                {
+                    GameMain.Instance.MainCamera.SetControl(false);
+                    if (Event.current.type != EventType.KeyDown && Event.current.type != EventType.KeyUp)
+                    {
+                        Input.ResetInputAxes();
+                    }
+                }
+                else if (!GameMain.Instance.MainCamera.GetControl())
+                {
+                    GameMain.Instance.MainCamera.SetControl(true);
+                }
+            }
+        }
+
+
         // Token: 0x0600002F RID: 47 RVA: 0x00003A88 File Offset: 0x00001C88
         public void OnGUI()
         {
+            if (!this._isVisible)
+            {
+                return;
+            }
 
             // Calculate the new window size
             float newWidth = 800; // You can adjust this value as needed
             float newHeight = 600; // You can adjust this value as needed
 
-
-            if (!this._isVisible)
-            {
-                return;
-            }
             if (this._isShowSetting)
             {
                 // Update the windowRect size
@@ -326,9 +331,12 @@ namespace COM3D2.PropMyItem.Plugin
                 this._windowRect.x = Mathf.Clamp(this._windowRect.x, 0, Screen.width - newWidth);
                 this._windowRect.y = Mathf.Clamp(this._windowRect.y, 0, Screen.height - newHeight);
 
-                this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiSettingFunc), "PropMyItem", GuiStyles.WindowStyle);
+                this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect,
+                    new GUI.WindowFunction(this.GuiSettingFunc), "PropMyItem " + PluginInfo.PluginVersion,
+                    GuiStyles.WindowStyle);
                 return;
             }
+
             if (this._isShowFilterSetting)
             {
                 // Update the windowRect size
@@ -339,7 +347,9 @@ namespace COM3D2.PropMyItem.Plugin
                 this._windowRect.x = Mathf.Clamp(this._windowRect.x, 0, Screen.width - newWidth);
                 this._windowRect.y = Mathf.Clamp(this._windowRect.y, 0, Screen.height - newHeight);
 
-                this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiFilterSettingFunc), "PropMyItem", GuiStyles.WindowStyle);
+                this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect,
+                    new GUI.WindowFunction(this.GuiFilterSettingFunc), "PropMyItem " + PluginInfo.PluginVersion,
+                    GuiStyles.WindowStyle);
                 return;
             }
 
@@ -350,7 +360,9 @@ namespace COM3D2.PropMyItem.Plugin
             // Ensure that the window doesn't go off the screen
             this._windowRect.x = Mathf.Clamp(this._windowRect.x, 0, Screen.width - newWidth);
             this._windowRect.y = Mathf.Clamp(this._windowRect.y, 0, Screen.height - newHeight);
-            this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiFunc), "PropMyItem", GuiStyles.WindowStyle);
+
+            this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiFunc),
+                "PropMyItem " + PluginInfo.PluginVersion, GuiStyles.WindowStyle);
         }
 
 
@@ -398,22 +410,27 @@ namespace COM3D2.PropMyItem.Plugin
             GUI.enabled = true;
             num += GuiStyles.ControlHeight + GuiStyles.Margin + GuiStyles.Margin;
             bool flag = UserConfig.Instance.IsAutoShoesHide;
-            flag = GUI.Toggle(new Rect(margin, num, width, GuiStyles.ControlHeight), flag, "室内で自動的に靴を脱ぐ ", GuiStyles.ToggleStyle);
+            flag = GUI.Toggle(new Rect(margin, num, width, GuiStyles.ControlHeight), flag, "室内で自動的に靴を脱ぐ ",
+                GuiStyles.ToggleStyle);
             if (flag != UserConfig.Instance.IsAutoShoesHide)
             {
                 UserConfig.Instance.IsAutoShoesHide = flag;
                 UserConfig.Instance.Save();
             }
+
             num += GuiStyles.ControlHeight + GuiStyles.Margin + GuiStyles.Margin;
             bool flag2 = UserConfig.Instance.IsOutputInfoLog;
-            flag2 = GUI.Toggle(new Rect(margin, num, width, GuiStyles.ControlHeight), flag2, "アイテム変更時のログ出力", GuiStyles.ToggleStyle);
+            flag2 = GUI.Toggle(new Rect(margin, num, width, GuiStyles.ControlHeight), flag2, "アイテム変更時のログ出力",
+                GuiStyles.ToggleStyle);
             if (flag2 != UserConfig.Instance.IsOutputInfoLog)
             {
                 UserConfig.Instance.IsOutputInfoLog = flag2;
                 UserConfig.Instance.Save();
             }
+
             num += GuiStyles.ControlHeight + GuiStyles.Margin + GuiStyles.Margin;
-            if (GUI.Button(new Rect(margin, num, width, GuiStyles.ControlHeight), "Menu/Mod 再読み込み", GuiStyles.ButtonStyle))
+            if (GUI.Button(new Rect(margin, num, width, GuiStyles.ControlHeight), "Menu/Mod 再読み込み",
+                    GuiStyles.ButtonStyle))
             {
                 this._isShowSetting = false;
                 //this._isPluginKeyChange = false;
@@ -429,12 +446,14 @@ namespace COM3D2.PropMyItem.Plugin
                     task = Task.Factory.StartNew(() => this.LoadMenuFiles(_isForcedInit));
                 }
             }
+
             num += GuiStyles.ControlHeight + GuiStyles.Margin + GuiStyles.Margin;
             if (GUI.Button(new Rect(margin, num, width, GuiStyles.ControlHeight), "戻る", GuiStyles.ButtonStyle))
             {
                 this._isShowSetting = false;
                 //this._isPluginKeyChange = false;
             }
+
             num += GuiStyles.ControlHeight + GuiStyles.Margin;
             this._windowRect.height = num;
             GUI.DragWindow();
@@ -448,29 +467,36 @@ namespace COM3D2.PropMyItem.Plugin
             float num3 = GuiStyles.ControlHeight + GuiStyles.Margin;
             float num4 = GuiStyles.Margin;
             string text = "フィルタ文字列：";
-            GUI.Label(new Rect(num4, num3, (float)(GuiStyles.FontSize * text.Length), GuiStyles.ControlHeight), text, GuiStyles.LabelStyle);
+            GUI.Label(new Rect(num4, num3, (float)(GuiStyles.FontSize * text.Length), GuiStyles.ControlHeight), text,
+                GuiStyles.LabelStyle);
             num4 += (float)(GuiStyles.FontSize * text.Length) + GuiStyles.Margin;
             float num5 = num - num4 - GuiStyles.Margin - (float)(GuiStyles.FontSize * 4);
-            this._selectedFilterText = GUI.TextField(new Rect(num4, num3, num5, GuiStyles.ControlHeight), this._selectedFilterText, GuiStyles.TextFieldStyle);
+            this._selectedFilterText = GUI.TextField(new Rect(num4, num3, num5, GuiStyles.ControlHeight),
+                this._selectedFilterText, GuiStyles.TextFieldStyle);
             num4 += num5 + GuiStyles.Margin;
             GUI.enabled = !string.IsNullOrEmpty(this._selectedFilterText);
-            if (GUI.Button(new Rect(num4, num3, (float)(GuiStyles.FontSize * 4), GuiStyles.ControlHeight), "登録", GuiStyles.ButtonStyle))
+            if (GUI.Button(new Rect(num4, num3, (float)(GuiStyles.FontSize * 4), GuiStyles.ControlHeight), "登録",
+                    GuiStyles.ButtonStyle))
             {
                 UserConfig.Instance.FilterTextList.Add(this._selectedFilterText);
                 UserConfig.Instance.FilterTextList.Sort();
                 UserConfig.Instance.Save();
                 this._isShowFilterSetting = false;
             }
+
             GUI.enabled = true;
             num4 = GuiStyles.Margin;
             num3 += GuiStyles.ControlHeight + GuiStyles.Margin;
             List<string> filterTextList = UserConfig.Instance.FilterTextList;
             int count = filterTextList.Count;
             Rect position = new Rect(num4, num3, num, num2 - num3 - GuiStyles.ControlHeight - GuiStyles.Margin * 2f);
-            Rect viewRect = new Rect(0f, 0f, num - GuiStyles.ScrollWidth, (float)count * (GuiStyles.ControlHeight + GuiStyles.Margin));
+            Rect viewRect = new Rect(0f, 0f, num - GuiStyles.ScrollWidth,
+                (float)count * (GuiStyles.ControlHeight + GuiStyles.Margin));
             this._scrollFilterPosition = GUI.BeginScrollView(position, this._scrollFilterPosition, viewRect);
-            Rect position2 = new Rect(GuiStyles.Margin, 0f, viewRect.width - GuiStyles.Margin - 50f, GuiStyles.ControlHeight);
-            Rect position3 = new Rect(position2.x + position2.width + GuiStyles.Margin, 0f, 50f, GuiStyles.ControlHeight);
+            Rect position2 = new Rect(GuiStyles.Margin, 0f, viewRect.width - GuiStyles.Margin - 50f,
+                GuiStyles.ControlHeight);
+            Rect position3 = new Rect(position2.x + position2.width + GuiStyles.Margin, 0f, 50f,
+                GuiStyles.ControlHeight);
             for (int i = 0; i < filterTextList.Count; i++)
             {
                 position2.y = (float)i * (GuiStyles.ControlHeight + GuiStyles.Margin);
@@ -480,12 +506,14 @@ namespace COM3D2.PropMyItem.Plugin
                     this._selectedFilterText = filterTextList[i];
                     this._isShowFilterSetting = false;
                 }
+
                 if (GUI.Button(position3, "x", GuiStyles.ButtonStyle))
                 {
                     UserConfig.Instance.FilterTextList.RemoveAt(i);
                     UserConfig.Instance.Save();
                 }
             }
+
             GUI.EndScrollView();
             num3 = num2 - GuiStyles.ControlHeight - GuiStyles.Margin * 2f;
             if (GUI.Button(new Rect(num4, num3, num, GuiStyles.ControlHeight), "戻る", GuiStyles.ButtonStyle))
@@ -494,6 +522,7 @@ namespace COM3D2.PropMyItem.Plugin
                 //this._isPluginKeyChange = false;
                 this._isShowFilterSetting = false;
             }
+
             num3 += GuiStyles.ControlHeight + GuiStyles.Margin;
             GUI.DragWindow();
         }
@@ -504,12 +533,15 @@ namespace COM3D2.PropMyItem.Plugin
             try
             {
                 // Add "X" button for close window in the top right corner
-                if (GUI.Button(new Rect(_windowRect.width - 25, 5, 20, 20), "X")) {
-                    this._isVisible = false;  // Set visibility to false to close window
+                if (GUI.Button(new Rect(5, 30, 20, 20), "X"))
+                {
+                    // Set visibility to false to close window
+                    this._isVisible = false;
                 }
 
                 string text = this._isMinimum ? "" : "最小化";
-                Rect position = new Rect(GuiStyles.Margin, 0f, (float)(GuiStyles.FontSize * (text.Length + 2)), GuiStyles.ControlHeight);
+                Rect position = new Rect(GuiStyles.Margin, 0f, (float)(GuiStyles.FontSize * (text.Length + 2)),
+                    GuiStyles.ControlHeight);
                 this._isMinimum = GUI.Toggle(position, this._isMinimum, text, GuiStyles.ToggleStyle);
                 if (this._isMinimum)
                 {
@@ -524,7 +556,7 @@ namespace COM3D2.PropMyItem.Plugin
                     this.guiSelectedMaid(ref margin, ref yPos);
                     this.guiSelectedCategoryFolder(ref margin, yPos, this._windowRect.height);
                     this.guiSelectedCategory(ref margin, yPos, this._windowRect.height);
-                    if (this._folders[this._selectedFolder].Name == "プリセット")//프리셋
+                    if (this._folders[this._selectedFolder].Name == "プリセット") //프리셋
                     {
                         this.guiSelectedPreset(ref margin, yPos, this._windowRect.height);
                     }
@@ -534,14 +566,17 @@ namespace COM3D2.PropMyItem.Plugin
                     }
                     else
                     {
-                        if (this._selectedMPN != MPN.null_mpn || this._folders[this._selectedFolder].Name == "全て" || this._folders[this._selectedFolder].Name == "選択中")
+                        if (this._selectedMPN != MPN.null_mpn || this._folders[this._selectedFolder].Name == "全て" ||
+                            this._folders[this._selectedFolder].Name == "選択中")
                         {
                             this.guiSelectedItemFilter(margin, yPos);
                             this.guiSelectedItem(ref margin, yPos, this._windowRect.height);
                         }
+
                         this.guiSelectedColorSet(ref margin, ref yPos);
                         this.guiSelectedMugenColor(ref margin, ref yPos);
                     }
+
                     this._windowRect.width = margin;
                 }
             }
@@ -571,11 +606,17 @@ namespace COM3D2.PropMyItem.Plugin
                     {
                         this._selectedMaid = 0;
                     }
-                    string text = visibleMaidList[this._selectedMaid].status.isFirstNameCall ? visibleMaidList[this._selectedMaid].status.firstName : visibleMaidList[this._selectedMaid].status.lastName;
+
+                    string text = visibleMaidList[this._selectedMaid].status.isFirstNameCall
+                        ? visibleMaidList[this._selectedMaid].status.firstName
+                        : visibleMaidList[this._selectedMaid].status.lastName;
                     Rect position = new Rect(xPos + 30f, 8f, 50f, 75f);
-                    Rect position2 = new Rect(xPos + 85f, yPos, (float)(10 * GuiStyles.FontSize), GuiStyles.ControlHeight);
-                    Rect position3 = new Rect(xPos, yPos + 24f, (float)(2 * GuiStyles.FontSize), GuiStyles.ControlHeight);
-                    Rect position4 = new Rect(xPos + 85f, yPos + 24f, (float)(2 * GuiStyles.FontSize), GuiStyles.ControlHeight);
+                    Rect position2 = new Rect(xPos + 85f, yPos, (float)(10 * GuiStyles.FontSize),
+                        GuiStyles.ControlHeight);
+                    Rect position3 = new Rect(xPos, yPos + 24f, (float)(2 * GuiStyles.FontSize),
+                        GuiStyles.ControlHeight);
+                    Rect position4 = new Rect(xPos + 85f, yPos + 24f, (float)(2 * GuiStyles.FontSize),
+                        GuiStyles.ControlHeight);
                     Rect position5 = new Rect(position4.x + position4.width + 5f, position4.y, 75f, position4.height);
 
                     GUI.Label(position, visibleMaidList[this._selectedMaid].GetThumIcon(), GuiStyles.LabelStyle);
@@ -584,12 +625,18 @@ namespace COM3D2.PropMyItem.Plugin
                     GuiStyles.LabelStyle.alignment = TextAnchor.MiddleCenter;
                     if (GUI.Button(position3, "<", GuiStyles.ButtonStyle))
                     {
-                        this._selectedMaid = ((this._selectedMaid == 0) ? (visibleMaidList.Count - 1) : (this._selectedMaid - 1));
+                        this._selectedMaid = ((this._selectedMaid == 0)
+                            ? (visibleMaidList.Count - 1)
+                            : (this._selectedMaid - 1));
                     }
+
                     if (GUI.Button(position4, ">", GuiStyles.ButtonStyle))
                     {
-                        this._selectedMaid = ((this._selectedMaid == visibleMaidList.Count - 1) ? 0 : (this._selectedMaid + 1));
+                        this._selectedMaid = ((this._selectedMaid == visibleMaidList.Count - 1)
+                            ? 0
+                            : (this._selectedMaid + 1));
                     }
+
                     isAllMaid = GUI.Toggle(position5, isAllMaid, "All Maid", GuiStyles.ToggleStyle);
                 }
             }
@@ -608,10 +655,13 @@ namespace COM3D2.PropMyItem.Plugin
             {
                 value = 0f;
             }
+
             Vector3 localPosition = maid.body0.trsEyeL.localPosition;
             Vector3 localPosition2 = maid.body0.trsEyeR.localPosition;
-            maid.body0.trsEyeL.localPosition = new Vector3(localPosition.x, System.Math.Max((num2 + value) / num, 0f), localPosition.z);
-            maid.body0.trsEyeR.localPosition = new Vector3(localPosition.x, System.Math.Min((num2 - value) / num, 0f), localPosition.z);
+            maid.body0.trsEyeL.localPosition = new Vector3(localPosition.x, System.Math.Max((num2 + value) / num, 0f),
+                localPosition.z);
+            maid.body0.trsEyeR.localPosition = new Vector3(localPosition.x, System.Math.Min((num2 - value) / num, 0f),
+                localPosition.z);
         }
 
         // Token: 0x06000035 RID: 53 RVA: 0x000045C4 File Offset: 0x000027C4
@@ -621,10 +671,11 @@ namespace COM3D2.PropMyItem.Plugin
             float num2 = (float)((double)GuiStyles.ControlHeight * 1.5);
             for (int i = 0; i < this._folders.Count; i++)
             {
-                if (this._folders[i].Name == "全て")//모든
+                if (this._folders[i].Name == "全て") //모든
                 {
                     yPos += GuiStyles.Margin * 2f;
                 }
+
                 Rect position = new Rect(xPos, yPos + (num2 + GuiStyles.Margin) * (float)i, num, num2);
                 GUI.enabled = (this._selectedFolder != i);
                 if (GUI.Button(position, this._folders[i].Name, GuiStyles.ButtonStyle))
@@ -635,12 +686,16 @@ namespace COM3D2.PropMyItem.Plugin
                     this._selectedItem = null;
                     this._selectedVariationItem = null;
                 }
+
                 GUI.enabled = true;
             }
-            if (GUI.Button(new Rect(xPos, windowHeight - num2 - GuiStyles.Margin, num, num2), "設定", GuiStyles.ButtonStyle))//설정
+
+            if (GUI.Button(new Rect(xPos, windowHeight - num2 - GuiStyles.Margin, num, num2), "設定",
+                    GuiStyles.ButtonStyle)) //설정
             {
                 this._isShowSetting = true;
             }
+
             xPos += num + GuiStyles.Margin;
         }
 
@@ -652,6 +707,7 @@ namespace COM3D2.PropMyItem.Plugin
             {
                 return;
             }
+
             foreach (MenuInfo menuInfo in list)
             {
                 if (!(menuInfo.FileName.ToLower() != basename))
@@ -660,15 +716,18 @@ namespace COM3D2.PropMyItem.Plugin
                     {
                         break;
                     }
+
                     List<MenuInfo> variationMenuList = menuInfo.VariationMenuList;
                     if (variationMenuList == null)
                     {
                         break;
                     }
+
                     if (variationMenuList.Count < 2)
                     {
                         break;
                     }
+
                     for (int i = 0; i < variationMenuList.Count; i++)
                     {
                         if (variationMenuList[i].FileName.ToLower() == filename)
@@ -689,12 +748,14 @@ namespace COM3D2.PropMyItem.Plugin
                             {
                                 fileName = variationMenuList[i - 1].FileName;
                             }
+
                             maid.SetProp(mpn, fileName, fileName.GetHashCode(), false, false);
                             maid.AllProcProp();
                             if (UserConfig.Instance.IsOutputInfoLog)
                             {
                                 PropMyItem.Log.LogMessage($"[PropMyItem] change item = {mpn} , {fileName}");
                             }
+
                             return;
                         }
                     }
@@ -711,7 +772,8 @@ namespace COM3D2.PropMyItem.Plugin
                 float width = (float)(7 * GuiStyles.FontSize);
                 float num2 = GuiStyles.ControlHeight * 1.5f;
                 Rect viewRect = new Rect(0f, 0f, width, (num2 + GuiStyles.Margin) * (float)num);
-                Rect position = new Rect(xPos, yPos, viewRect.width + GuiStyles.ScrollWidth, windowHeight - yPos - GuiStyles.Margin);
+                Rect position = new Rect(xPos, yPos, viewRect.width + GuiStyles.ScrollWidth,
+                    windowHeight - yPos - GuiStyles.Margin);
                 this._categoryScrollPosition = GUI.BeginScrollView(position, this._categoryScrollPosition, viewRect);
                 for (int i = 0; i < num; i++)
                 {
@@ -724,7 +786,8 @@ namespace COM3D2.PropMyItem.Plugin
                         this._selectedVariationItem = null;
                         this._scrollPosition.y = 0f;
                         MPN selectedMPN = MPN.head;
-                        if (this._categoryMPNDic.TryGetValue(this._folders[this._selectedFolder].Categories[i], out selectedMPN))
+                        if (this._categoryMPNDic.TryGetValue(this._folders[this._selectedFolder].Categories[i],
+                                out selectedMPN))
                         {
                             this._selectedMPN = selectedMPN;
                         }
@@ -748,6 +811,7 @@ namespace COM3D2.PropMyItem.Plugin
                                     {
                                         this._selectedPresetType = CharacterMgr.PresetType.Body;
                                     }
+
                                     foreach (CharacterMgr.Preset preset in list)
                                     {
                                         if (preset.ePreType == this._selectedPresetType)
@@ -757,12 +821,16 @@ namespace COM3D2.PropMyItem.Plugin
                                     }
                                 }
                             }
+
                             this._selectedMPN = MPN.null_mpn;
                         }
+
                         this._selectedCategory = i;
                     }
+
                     GUI.enabled = true;
                 }
+
                 GUI.EndScrollView();
                 xPos += position.width + GuiStyles.Margin;
             }
@@ -787,6 +855,7 @@ namespace COM3D2.PropMyItem.Plugin
                     GameMain.Instance.CharacterMgr.PresetSave(f_maid, CharacterMgr.PresetType.All);
                 }
             }
+
             yPos += GuiStyles.ControlHeight + GuiStyles.Margin + GuiStyles.Margin;
             xPos += num + GuiStyles.Margin;
         }
@@ -803,13 +872,15 @@ namespace COM3D2.PropMyItem.Plugin
                 int count = this._selectedPresetList.Count;
                 int num5 = ((float)count % num2 == 0f) ? 0 : 1;
                 Rect viewRect = new Rect(0f, 0f, num, (float)((int)((float)count / num2) + num5) * num4);
-                Rect position = new Rect(xPos, yPos, viewRect.width + GuiStyles.ScrollWidth, windowHeight - yPos - (float)GuiStyles.FontSize);
+                Rect position = new Rect(xPos, yPos, viewRect.width + GuiStyles.ScrollWidth,
+                    windowHeight - yPos - (float)GuiStyles.FontSize);
                 this._scrollPosition = GUI.BeginScrollView(position, this._scrollPosition, viewRect);
                 new List<int>();
                 new Rect(0f, 0f, num3, num4);
                 for (int i = 0; i < count; i++)
                 {
-                    Rect position2 = new Rect(num3 * ((float)i % num2), num4 * (float)((int)((float)i / num2)), num3, num4);
+                    Rect position2 = new Rect(num3 * ((float)i % num2), num4 * (float)((int)((float)i / num2)), num3,
+                        num4);
                     new Rect(num3 * ((float)i % num2), num4 * (float)((int)((float)i / num2)), 20f, 20f);
                     if (Event.current.type == EventType.Repaint)
                     {
@@ -887,6 +958,7 @@ namespace COM3D2.PropMyItem.Plugin
                         }
                     }
                 }
+
                 GUI.EndScrollView();
                 xPos += num + GuiStyles.ScrollWidth + GuiStyles.Margin;
             }
@@ -912,9 +984,12 @@ namespace COM3D2.PropMyItem.Plugin
             {
                 num3 += 40;
             }
-            GUI.Label(new Rect(num, num2, (float)(GuiStyles.FontSize * 6), GuiStyles.ControlHeight), "フィルタ：", GuiStyles.LabelStyle);
+
+            GUI.Label(new Rect(num, num2, (float)(GuiStyles.FontSize * 6), GuiStyles.ControlHeight), "フィルタ：",
+                GuiStyles.LabelStyle);
             num += (float)(GuiStyles.FontSize * 5) + GuiStyles.Margin;
-            Rect position = new Rect(num, num2 - GuiStyles.ControlHeight, (float)(GuiStyles.FontSize * 7), GuiStyles.ControlHeight);
+            Rect position = new Rect(num, num2 - GuiStyles.ControlHeight, (float)(GuiStyles.FontSize * 7),
+                GuiStyles.ControlHeight);
             this._isFavFilter = GUI.Toggle(position, this._isFavFilter, "お気に入り", GuiStyles.ToggleStyle);
             Rect position2 = new Rect(num, num2, (float)(GuiStyles.FontSize * 4), GuiStyles.ControlHeight);
             if (GUI.Button(position2, array[this._selectedFilter], GuiStyles.ButtonStyle))
@@ -922,6 +997,7 @@ namespace COM3D2.PropMyItem.Plugin
                 this._selectedFilter = ((this._selectedFilter == 2) ? 0 : (this._selectedFilter + 1));
                 this._scrollPosition.y = 0f;
             }
+
             num += (float)(GuiStyles.FontSize * 4) + GuiStyles.Margin;
             Rect position3 = new Rect(num, num2, (float)num3, GuiStyles.ControlHeight);
             this._selectedFilterText = GUI.TextField(position3, this._selectedFilterText, GuiStyles.TextFieldStyle);
@@ -931,6 +1007,7 @@ namespace COM3D2.PropMyItem.Plugin
             {
                 this._isShowFilterSetting = true;
             }
+
             num += (float)(GuiStyles.FontSize * 2) + GuiStyles.Margin;
             position2.Set(num, num2, (float)(GuiStyles.FontSize * 2), GuiStyles.ControlHeight);
             if (GUI.Button(position2, "x", GuiStyles.ButtonStyle))
@@ -945,7 +1022,8 @@ namespace COM3D2.PropMyItem.Plugin
             List<MenuInfo> list = new List<MenuInfo>();
             if (this._folders[this._selectedFolder].Name == "全て")
             {
-                using (Dictionary<string, MPN>.ValueCollection.Enumerator enumerator = this._categoryMPNDic.Values.GetEnumerator())
+                using (Dictionary<string, MPN>.ValueCollection.Enumerator enumerator =
+                       this._categoryMPNDic.Values.GetEnumerator())
                 {
                     while (enumerator.MoveNext())
                     {
@@ -956,9 +1034,11 @@ namespace COM3D2.PropMyItem.Plugin
                             list.AddRange(collection);
                         }
                     }
+
                     return list;
                 }
             }
+
             if (this._folders[this._selectedFolder].Name == "選択中")
             {
                 List<Maid> visibleMaidList = CommonUtil.GetVisibleMaidList();
@@ -966,13 +1046,16 @@ namespace COM3D2.PropMyItem.Plugin
                 {
                     return list;
                 }
+
                 Maid maid = visibleMaidList[this._selectedMaid];
-                using (Dictionary<string, MPN>.ValueCollection.Enumerator enumerator2 = this._categoryMPNDic.Values.GetEnumerator())
+                using (Dictionary<string, MPN>.ValueCollection.Enumerator enumerator2 =
+                       this._categoryMPNDic.Values.GetEnumerator())
                 {
                     while (enumerator2.MoveNext())
                     {
                         MPN mpn = enumerator2.Current;
-                        if (mpn != MPN.set_maidwear && mpn != MPN.set_mywear && mpn != MPN.set_underwear && mpn != MPN.set_body)
+                        if (mpn != MPN.set_maidwear && mpn != MPN.set_mywear && mpn != MPN.set_underwear &&
+                            mpn != MPN.set_body)
                         {
                             List<MenuInfo> list2 = null;
                             if (this._mpnMenuListDictionary.TryGetValue(mpn, out list2))
@@ -985,16 +1068,19 @@ namespace COM3D2.PropMyItem.Plugin
                                     {
                                         foreach (MenuInfo menuInfo2 in menuInfo.VariationMenuList)
                                         {
-                                            if (menuInfo2.FileName.IndexOf(selectedMenuFileName, StringComparison.OrdinalIgnoreCase) == 0)
+                                            if (menuInfo2.FileName.IndexOf(selectedMenuFileName,
+                                                    StringComparison.OrdinalIgnoreCase) == 0)
                                             {
                                                 if (menuInfo2.IconName != "_I_del.tex")
                                                 {
                                                     list.Add(menuInfo);
                                                 }
+
                                                 flag = true;
                                                 break;
                                             }
                                         }
+
                                         if (flag)
                                         {
                                             break;
@@ -1004,9 +1090,11 @@ namespace COM3D2.PropMyItem.Plugin
                             }
                         }
                     }
+
                     return list;
                 }
             }
+
             this._mpnMenuListDictionary.TryGetValue(this._selectedMPN, out list);
             return list;
         }
@@ -1019,6 +1107,7 @@ namespace COM3D2.PropMyItem.Plugin
             {
                 return;
             }
+
             float num = 8f;
             float num2 = 20f;
             float num3 = 8f;
@@ -1028,7 +1117,8 @@ namespace COM3D2.PropMyItem.Plugin
             float num7 = num6;
             int num8 = itemList.Count;
             int num9 = 0;
-            if (this._selectedMPN == MPN.set_maidwear || this._selectedMPN == MPN.set_mywear || this._selectedMPN == MPN.set_underwear || this._selectedMPN == MPN.set_body)
+            if (this._selectedMPN == MPN.set_maidwear || this._selectedMPN == MPN.set_mywear ||
+                this._selectedMPN == MPN.set_underwear || this._selectedMPN == MPN.set_body)
             {
                 num6 = 75f;
                 num7 = num6 * 1.44f;
@@ -1046,13 +1136,15 @@ namespace COM3D2.PropMyItem.Plugin
                 num2 = 24f;
                 num3 = 6f;
             }
+
             num5 = num6 * num4;
             ReadOnlyDictionary<string, bool> havePartsItems = GameMain.Instance.CharacterMgr.status.havePartsItems;
             for (int i = 0; i < num8; i++)
             {
                 MenuInfo menuInfo = itemList[i];
                 menuInfo.IsHave = true;
-                if (menuInfo.IsShopTarget && havePartsItems.ContainsKey(menuInfo.FileName) && !havePartsItems[menuInfo.FileName])
+                if (menuInfo.IsShopTarget && havePartsItems.ContainsKey(menuInfo.FileName) &&
+                    !havePartsItems[menuInfo.FileName])
                 {
                     num9++;
                     menuInfo.IsHave = false;
@@ -1074,19 +1166,25 @@ namespace COM3D2.PropMyItem.Plugin
                         menuInfo.IsHave = false;
                         goto IL_1DC;
                     }
+
                     if (this._isFavFilter && !menuInfo.IsFavorite)
                     {
                         num9++;
                         menuInfo.IsHave = false;
                     }
-                    else if (!string.IsNullOrEmpty(this._selectedFilterText) && menuInfo.ItemName.IndexOf(this._selectedFilterText, StringComparison.OrdinalIgnoreCase) == -1 && menuInfo.FilePath.IndexOf(this._selectedFilterText, StringComparison.OrdinalIgnoreCase) == -1)
+                    else if (!string.IsNullOrEmpty(this._selectedFilterText) &&
+                             menuInfo.ItemName.IndexOf(this._selectedFilterText, StringComparison.OrdinalIgnoreCase) ==
+                             -1 && menuInfo.FilePath.IndexOf(this._selectedFilterText,
+                                 StringComparison.OrdinalIgnoreCase) == -1)
                     {
                         num9++;
                         menuInfo.IsHave = false;
                     }
                 }
-            IL_1DC:;
+
+                IL_1DC: ;
             }
+
             num8 -= num9;
             int num10 = ((float)num8 % num4 == 0f) ? 0 : 1;
             int num11 = (int)(windowHeight - yPos - (float)GuiStyles.FontSize - GuiStyles.ControlHeight);
@@ -1095,7 +1193,9 @@ namespace COM3D2.PropMyItem.Plugin
             {
                 viewRect = new Rect(0f, 0f, num6 * num4, (float)((int)((float)(num8 + 5) / num4) + num10) * num7);
             }
-            Rect position = new Rect(xPos, yPos + GuiStyles.ControlHeight, viewRect.width + GuiStyles.ScrollWidth, (float)num11);
+
+            Rect position = new Rect(xPos, yPos + GuiStyles.ControlHeight, viewRect.width + GuiStyles.ScrollWidth,
+                (float)num11);
             this._scrollPosition = GUI.BeginScrollView(position, this._scrollPosition, viewRect);
             new List<int>();
             new Rect(0f, 0f, num6, num7);
@@ -1138,6 +1238,7 @@ namespace COM3D2.PropMyItem.Plugin
                 maid = visibleMaidList[this._selectedMaid];
                 text = CommonUtil.GetSelectedMenuFileName(new MPN?(this._selectedMPN), maid);
             }
+
             float y = this._scrollPosition.y;
             float num12 = this._scrollPosition.y + (float)num11;
             int num13 = 0;
@@ -1169,6 +1270,7 @@ namespace COM3D2.PropMyItem.Plugin
                             }
                         }
                     }
+
                     float num14 = num7 * (float)((int)((float)num13 / num4));
                     float num15 = num14 + num7;
                     if ((y <= num14 && num15 <= num12) || (num14 <= y && y <= num15) || (y <= num14 && num14 <= num12))
@@ -1189,23 +1291,28 @@ namespace COM3D2.PropMyItem.Plugin
                                     PropMyItem.Log.LogMessage(e.ToString());
                                 }
                             }
+
                             MenuInfo menuInfo4 = MenuModParser.parseMod(menuInfo2.FilePath);
                             menuInfo2.Icon = menuInfo4.Icon;
                         }
-                    IL_632:
+
+                        IL_632:
                         string tooltip = menuInfo2.ItemName;
-                        if (this._folders[this._selectedFolder].Name == "全て" || this._folders[this._selectedFolder].Name == "選択中")
+                        if (this._folders[this._selectedFolder].Name == "全て" ||
+                            this._folders[this._selectedFolder].Name == "選択中")
                         {
                             tooltip = menuInfo2.CategoryName + "：" + menuInfo2.ItemName;
                         }
-                        Rect position2 = new Rect(num6 * ((float)num13 % num4), num7 * (float)((int)((float)num13 / num4)), num6, num7);
+
+                        Rect position2 = new Rect(num6 * ((float)num13 % num4),
+                            num7 * (float)((int)((float)num13 / num4)), num6, num7);
                         Rect position3 = new Rect(position2.x, position2.y + position2.height - 20f, 20f, 20f);
                         Rect position4 = new Rect(position2.x, position2.y, 20f, 20f);
-                        Rect position5 = new Rect(position2.x + position2.width - 20f, position2.y + position2.height - 20f, 20f, 20f);
+                        Rect position5 = new Rect(position2.x + position2.width - 20f,
+                            position2.y + position2.height - 20f, 20f, 20f);
                         if (Event.current.type == EventType.Repaint)
                         {
                             GUI.enabled = enabled;
-
 
 
                             if (GUI.Button(position2, new GUIContent(menuInfo2.Icon, tooltip)))
@@ -1219,6 +1326,7 @@ namespace COM3D2.PropMyItem.Plugin
                                     {
                                         PropMyItem.Log.LogMessage("[PropMyItem] change item = " + menuInfo2.FileName);
                                     }
+
                                     if (isAllMaid)
                                     {
                                         foreach (var item in visibleMaidList2)
@@ -1234,13 +1342,13 @@ namespace COM3D2.PropMyItem.Plugin
                             }
 
 
-
                             GUI.enabled = true;
                             GUIStyle style = guistyle2;
                             if (menuInfo2.IsFavorite)
                             {
                                 style = guistyle3;
                             }
+
                             if (GUI.Button(position3, new GUIContent("★", tooltip), style))
                             {
                                 if (menuInfo2.IsFavorite)
@@ -1253,8 +1361,10 @@ namespace COM3D2.PropMyItem.Plugin
                                     menuInfo2.IsFavorite = true;
                                     UserConfig.Instance.FavList.Add(menuInfo2.FileName.ToLower());
                                 }
+
                                 UserConfig.Instance.Save();
                             }
+
                             if (this._folders[this._selectedFolder].Name == "選択中")
                             {
                                 if (GUI.Button(position4, new GUIContent("×", tooltip)))
@@ -1273,13 +1383,14 @@ namespace COM3D2.PropMyItem.Plugin
                                         maid.DelProp(menuInfo2.MPN, false);
                                         maid.AllProcProp();
                                     }
-
                                 }
+
                                 GUIStyle style2 = guistyle4;
                                 if (menuInfo2.IsColorLock)
                                 {
                                     style2 = guistyle5;
                                 }
+
                                 if (GUI.Button(position5, new GUIContent("■", tooltip), style2))
                                 {
                                     if (menuInfo2.IsColorLock)
@@ -1292,6 +1403,7 @@ namespace COM3D2.PropMyItem.Plugin
                                         menuInfo2.IsColorLock = true;
                                         UserConfig.Instance.ColorLockList.Add(menuInfo2.FileName.ToLower());
                                     }
+
                                     UserConfig.Instance.Save();
                                 }
                             }
@@ -1316,11 +1428,13 @@ namespace COM3D2.PropMyItem.Plugin
                                         maid.AllProcProp();
                                     }
                                 }
+
                                 GUIStyle style3 = guistyle4;
                                 if (menuInfo2.IsColorLock)
                                 {
                                     style3 = guistyle5;
                                 }
+
                                 if (GUI.Button(position5, new GUIContent("■", tooltip), style3))
                                 {
                                     if (menuInfo2.IsColorLock)
@@ -1333,14 +1447,17 @@ namespace COM3D2.PropMyItem.Plugin
                                         menuInfo2.IsColorLock = true;
                                         UserConfig.Instance.ColorLockList.Add(menuInfo2.FileName.ToLower());
                                     }
+
                                     UserConfig.Instance.Save();
                                 }
                             }
+
                             GUIStyle style4 = guistyle2;
                             if (menuInfo2.IsFavorite)
                             {
                                 style4 = guistyle3;
                             }
+
                             if (GUI.Button(position3, new GUIContent("★", tooltip), style4))
                             {
                                 if (menuInfo2.IsFavorite)
@@ -1353,8 +1470,10 @@ namespace COM3D2.PropMyItem.Plugin
                                     menuInfo2.IsFavorite = true;
                                     UserConfig.Instance.FavList.Add(menuInfo2.FileName.ToLower());
                                 }
+
                                 UserConfig.Instance.Save();
                             }
+
                             GUI.enabled = enabled;
                             if (GUI.Button(position2, new GUIContent(menuInfo2.Icon, tooltip)))
                             {
@@ -1372,32 +1491,40 @@ namespace COM3D2.PropMyItem.Plugin
                                     {
                                         foreach (var maid1 in visibleMaidList3)
                                         {
-                                            maid1.SetProp(menuInfo2.MPN, menuInfo2.FileName, Path.GetFileName(menuInfo2.FileName).GetHashCode(), false, false);
+                                            maid1.SetProp(menuInfo2.MPN, menuInfo2.FileName,
+                                                Path.GetFileName(menuInfo2.FileName).GetHashCode(), false, false);
                                         }
                                     }
                                     else
                                     {
-                                        visibleMaidList3[this._selectedMaid].SetProp(menuInfo2.MPN, menuInfo2.FileName, Path.GetFileName(menuInfo2.FileName).GetHashCode(), false, false);
+                                        visibleMaidList3[this._selectedMaid].SetProp(menuInfo2.MPN, menuInfo2.FileName,
+                                            Path.GetFileName(menuInfo2.FileName).GetHashCode(), false, false);
                                     }
 
 
-
-                                    if ((menuInfo2.MPN == MPN.folder_futae || menuInfo2.MPN == MPN.folder_matsuge_low || menuInfo2.MPN == MPN.folder_matsuge_up || menuInfo2.MPN == MPN.folder_eye || menuInfo2.MPN == MPN.folder_mayu || menuInfo2.MPN == MPN.folder_skin || menuInfo2.MPN == MPN.folder_underhair || menuInfo2.MPN == MPN.chikubi) && menuInfo2.ColorSetMenuList.Count > 0)
+                                    if ((menuInfo2.MPN == MPN.folder_futae || menuInfo2.MPN == MPN.folder_matsuge_low ||
+                                         menuInfo2.MPN == MPN.folder_matsuge_up || menuInfo2.MPN == MPN.folder_eye ||
+                                         menuInfo2.MPN == MPN.folder_mayu || menuInfo2.MPN == MPN.folder_skin ||
+                                         menuInfo2.MPN == MPN.folder_underhair || menuInfo2.MPN == MPN.chikubi) &&
+                                        menuInfo2.ColorSetMenuList.Count > 0)
                                     {
                                         MenuInfo menuInfo6 = this._selectedVariationItem.ColorSetMenuList[0];
                                         if (isAllMaid)
                                         {
                                             foreach (var maid1 in visibleMaidList)
                                             {
-                                                maid1.SetProp(menuInfo2.ColorSetMPN, menuInfo6.FileName, Path.GetFileName(menuInfo6.FileName).GetHashCode(), false, false);
+                                                maid1.SetProp(menuInfo2.ColorSetMPN, menuInfo6.FileName,
+                                                    Path.GetFileName(menuInfo6.FileName).GetHashCode(), false, false);
                                             }
                                         }
                                         else
                                         {
-                                            visibleMaidList3[this._selectedMaid].SetProp(menuInfo2.ColorSetMPN, menuInfo6.FileName, Path.GetFileName(menuInfo6.FileName).GetHashCode(), false, false);
+                                            visibleMaidList3[this._selectedMaid].SetProp(menuInfo2.ColorSetMPN,
+                                                menuInfo6.FileName, Path.GetFileName(menuInfo6.FileName).GetHashCode(),
+                                                false, false);
                                         }
-
                                     }
+
                                     if (isAllMaid)
                                     {
                                         foreach (var maid1 in visibleMaidList)
@@ -1409,26 +1536,33 @@ namespace COM3D2.PropMyItem.Plugin
                                     {
                                         visibleMaidList3[this._selectedMaid].AllProcProp();
                                     }
-
                                 }
                             }
+
                             GUI.enabled = true;
                         }
+
                         int count = menuInfo2.VariationMenuList.Count;
                         if (count > 1)
                         {
-                            Rect position6 = new Rect(position2.x + position2.width - num, position2.y + num3, 10f, 10f);
-                            if (menuInfo2.MPN == MPN.set_maidwear || menuInfo2.MPN == MPN.set_mywear || menuInfo2.MPN == MPN.set_underwear || menuInfo2.MPN == MPN.set_body)
+                            Rect position6 = new Rect(position2.x + position2.width - num, position2.y + num3, 10f,
+                                10f);
+                            if (menuInfo2.MPN == MPN.set_maidwear || menuInfo2.MPN == MPN.set_mywear ||
+                                menuInfo2.MPN == MPN.set_underwear || menuInfo2.MPN == MPN.set_body)
                             {
-                                position6 = new Rect(position2.x + position2.width - num2, position2.y + num3, 10f, 10f);
+                                position6 = new Rect(position2.x + position2.width - num2, position2.y + num3, 10f,
+                                    10f);
                             }
+
                             GUI.Label(position6, count.ToString(), guistyle);
                         }
                     }
+
                     num13++;
                 }
                 //IL_D64:;
             }
+
             if (this._folders[this._selectedFolder].Name == "選択中")
             {
                 float num16 = num7 * (float)((int)((float)num13 / num4));
@@ -1476,9 +1610,11 @@ namespace COM3D2.PropMyItem.Plugin
                             Match match = Regex.Match(text2, "_z\\d{1,4}");
                             basename = text2.Replace(match.Value, "");
                         }
+
                         this.nextPattern(maid, mpn, basename, text2, true);
                     }
                 }
+
                 if (GUI.Button(position8, "カラバリ変更(後)", GuiStyles.ButtonStyle) && maid != null)
                 {
                     foreach (MPN mpn2 in array)
@@ -1493,6 +1629,7 @@ namespace COM3D2.PropMyItem.Plugin
                                 Match match2 = Regex.Match(text3, "_z\\d{1,4}");
                                 basename2 = text3.Replace(match2.Value, "");
                             }
+
                             this.nextPattern(maid, mpn2, basename2, text3, false);
                         }
                         catch (Exception ex)
@@ -1502,6 +1639,7 @@ namespace COM3D2.PropMyItem.Plugin
                     }
                 }
             }
+
             GUI.EndScrollView();
             GuiStyles.LabelStyle.alignment = TextAnchor.UpperLeft;
             Rect position9 = new Rect(xPos, yPos, num6 * num4 + GuiStyles.ScrollWidth, GuiStyles.ControlHeight);
@@ -1516,21 +1654,30 @@ namespace COM3D2.PropMyItem.Plugin
 
         private void SetItem(MenuInfo menuInfo2, Maid visibleMaidList2)
         {
-            visibleMaidList2.SetProp(menuInfo2.MPN, menuInfo2.FileName, Path.GetFileName(menuInfo2.FileName).GetHashCode(), false, false);
-            if ((menuInfo2.MPN == MPN.folder_futae || menuInfo2.MPN == MPN.folder_matsuge_low || menuInfo2.MPN == MPN.folder_matsuge_up || menuInfo2.MPN == MPN.folder_eye || menuInfo2.MPN == MPN.folder_mayu || menuInfo2.MPN == MPN.folder_skin || menuInfo2.MPN == MPN.folder_underhair || menuInfo2.MPN == MPN.chikubi) && menuInfo2.ColorSetMenuList.Count > 0)
+            visibleMaidList2.SetProp(menuInfo2.MPN, menuInfo2.FileName,
+                Path.GetFileName(menuInfo2.FileName).GetHashCode(), false, false);
+            if ((menuInfo2.MPN == MPN.folder_futae || menuInfo2.MPN == MPN.folder_matsuge_low ||
+                 menuInfo2.MPN == MPN.folder_matsuge_up || menuInfo2.MPN == MPN.folder_eye ||
+                 menuInfo2.MPN == MPN.folder_mayu || menuInfo2.MPN == MPN.folder_skin ||
+                 menuInfo2.MPN == MPN.folder_underhair || menuInfo2.MPN == MPN.chikubi) &&
+                menuInfo2.ColorSetMenuList.Count > 0)
             {
                 MenuInfo menuInfo5 = this._selectedVariationItem.ColorSetMenuList[0];
-                visibleMaidList2.SetProp(menuInfo2.ColorSetMPN, menuInfo5.FileName, Path.GetFileName(menuInfo5.FileName).GetHashCode(), false, false);
+                visibleMaidList2.SetProp(menuInfo2.ColorSetMPN, menuInfo5.FileName,
+                    Path.GetFileName(menuInfo5.FileName).GetHashCode(), false, false);
             }
+
             visibleMaidList2.AllProcProp();
         }
 
         // Token: 0x0600003E RID: 62 RVA: 0x00006364 File Offset: 0x00004564
-        private void guiSelectedVariation(ref float posX, float posY, MenuInfo itemMenuInfo, float iconWidth, float iconHeight, float windowHeight, string selectedFileName)
+        private void guiSelectedVariation(ref float posX, float posY, MenuInfo itemMenuInfo, float iconWidth,
+            float iconHeight, float windowHeight, string selectedFileName)
         {
             int count = itemMenuInfo.VariationMenuList.Count;
             Rect viewRect = new Rect(0f, 0f, iconWidth, (float)count * (iconWidth + 4f));
-            Rect position = new Rect(posX, posY + GuiStyles.ControlHeight, viewRect.width + GuiStyles.ScrollWidth, windowHeight - posY - (float)GuiStyles.FontSize - GuiStyles.ControlHeight);
+            Rect position = new Rect(posX, posY + GuiStyles.ControlHeight, viewRect.width + GuiStyles.ScrollWidth,
+                windowHeight - posY - (float)GuiStyles.FontSize - GuiStyles.ControlHeight);
             this._colorItemScrollPosition = GUI.BeginScrollView(position, this._colorItemScrollPosition, viewRect);
             new Rect(0f, 0f, iconWidth, iconWidth);
             int i = 0;
@@ -1551,25 +1698,32 @@ namespace COM3D2.PropMyItem.Plugin
                             PropMyItem.Log.LogMessage("" + e.ToString());
                         }
                     }
+
                     MenuInfo menuInfo2 = MenuModParser.parseMod(menuInfo.FilePath);
                     menuInfo.Icon = menuInfo2.Icon;
                     goto IL_10A;
                 }
+
                 goto IL_10A;
-            IL_101:
+                IL_101:
                 i++;
                 continue;
-            IL_10A:
+                IL_10A:
                 string tooltip = menuInfo.ItemName;
-                if (this._folders[this._selectedFolder].Name == "全て" || this._folders[this._selectedFolder].Name == "選択中")
+                if (this._folders[this._selectedFolder].Name == "全て" ||
+                    this._folders[this._selectedFolder].Name == "選択中")
                 {
                     tooltip = menuInfo.CategoryName + "：" + menuInfo.ItemName;
                 }
-                if (!string.IsNullOrEmpty(selectedFileName) && menuInfo.FileName.IndexOf(selectedFileName, StringComparison.OrdinalIgnoreCase) == 0)
+
+                if (!string.IsNullOrEmpty(selectedFileName) &&
+                    menuInfo.FileName.IndexOf(selectedFileName, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     GUI.enabled = false;
                 }
-                if (GUI.Button(new Rect(0f, (iconWidth + 4f) * (float)i, iconWidth, iconWidth), new GUIContent(menuInfo.Icon, tooltip)))
+
+                if (GUI.Button(new Rect(0f, (iconWidth + 4f) * (float)i, iconWidth, iconWidth),
+                        new GUIContent(menuInfo.Icon, tooltip)))
                 {
                     this._selectedVariationItem = menuInfo;
                     List<Maid> visibleMaidList = CommonUtil.GetVisibleMaidList();
@@ -1579,13 +1733,15 @@ namespace COM3D2.PropMyItem.Plugin
                         {
                             foreach (var maid1 in visibleMaidList)
                             {
-                                maid1.SetProp(menuInfo.MPN, menuInfo.FileName, Path.GetFileName(menuInfo.FileName).GetHashCode(), false, false);
+                                maid1.SetProp(menuInfo.MPN, menuInfo.FileName,
+                                    Path.GetFileName(menuInfo.FileName).GetHashCode(), false, false);
                                 maid1.AllProcProp();
                             }
                         }
                         else
                         {
-                            visibleMaidList[this._selectedMaid].SetProp(menuInfo.MPN, menuInfo.FileName, Path.GetFileName(menuInfo.FileName).GetHashCode(), false, false);
+                            visibleMaidList[this._selectedMaid].SetProp(menuInfo.MPN, menuInfo.FileName,
+                                Path.GetFileName(menuInfo.FileName).GetHashCode(), false, false);
                             visibleMaidList[this._selectedMaid].AllProcProp();
                         }
 
@@ -1596,6 +1752,7 @@ namespace COM3D2.PropMyItem.Plugin
                         }
                     }
                 }
+
                 // Display item name label next to the button
                 GUILayout.BeginVertical();
                 GUILayout.Label(menuInfo.ItemName, GuiStyles.LabelStyle);
@@ -1605,6 +1762,7 @@ namespace COM3D2.PropMyItem.Plugin
                 GUI.enabled = true;
                 goto IL_101;
             }
+
             GUI.EndScrollView();
             posX += iconWidth + GuiStyles.ScrollWidth + 8f;
         }
@@ -1621,6 +1779,7 @@ namespace COM3D2.PropMyItem.Plugin
                     Maid maid = visibleMaidList[this._selectedMaid];
                     value = CommonUtil.GetSelectedMenuFileName(new MPN?(this._selectedVariationItem.ColorSetMPN), maid);
                 }
+
                 float num = (float)(420 / this._selectedVariationItem.ColorSetMenuList.Count);
                 num = ((num > 28f) ? 28f : num);
                 int i = 0;
@@ -1641,16 +1800,19 @@ namespace COM3D2.PropMyItem.Plugin
                                 PropMyItem.Log.LogMessage("" + e.ToString());
                             }
                         }
+
                         MenuInfo menuInfo2 = MenuModParser.parseMod(menuInfo.FilePath);
                         menuInfo.Icon = menuInfo2.Icon;
                         goto IL_125;
                     }
+
                     goto IL_125;
-                IL_11C:
+                    IL_11C:
                     i++;
                     continue;
-                IL_125:
-                    if (!string.IsNullOrEmpty(value) && menuInfo.FileName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == 0)
+                    IL_125:
+                    if (!string.IsNullOrEmpty(value) &&
+                        menuInfo.FileName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         if (menuInfo.FileName.IndexOf("mugen", StringComparison.OrdinalIgnoreCase) != -1)
                         {
@@ -1660,8 +1822,10 @@ namespace COM3D2.PropMyItem.Plugin
                         {
                             this._isFreeColor = false;
                         }
+
                         GUI.enabled = false;
                     }
+
                     if (GUI.Button(new Rect(posX, posY + 10f + (num + 1f) * (float)i, num, num), menuInfo.Icon))
                     {
                         if (menuInfo.FileName.IndexOf("mugen", StringComparison.OrdinalIgnoreCase) != -1)
@@ -1672,10 +1836,12 @@ namespace COM3D2.PropMyItem.Plugin
                         {
                             this._isFreeColor = false;
                         }
+
                         List<Maid> visibleMaidList2 = CommonUtil.GetVisibleMaidList();
                         if (this._selectedMaid >= 0 && visibleMaidList2.Count - 1 >= this._selectedMaid)
                         {
-                            visibleMaidList2[this._selectedMaid].SetProp(menuInfo.MPN, menuInfo.FileName, Path.GetFileName(menuInfo.FileName).GetHashCode(), false, false);
+                            visibleMaidList2[this._selectedMaid].SetProp(menuInfo.MPN, menuInfo.FileName,
+                                Path.GetFileName(menuInfo.FileName).GetHashCode(), false, false);
                             visibleMaidList2[this._selectedMaid].AllProcProp();
                         }
                     }
@@ -1690,9 +1856,11 @@ namespace COM3D2.PropMyItem.Plugin
                     GUI.enabled = true;
                     goto IL_11C;
                 }
+
                 posX += num + 8f;
                 return;
             }
+
             this._isFreeColor = false;
         }
 
@@ -1767,17 +1935,19 @@ namespace COM3D2.PropMyItem.Plugin
                                 default:
                                     goto IL_189;
                             }
+
                             break;
                     }
+
                     parts_COLOR = MaidParts.PARTS_COLOR.SKIN;
                     goto IL_189;
-                IL_F8:
+                    IL_F8:
                     parts_COLOR = MaidParts.PARTS_COLOR.UNDER_HAIR;
                     goto IL_189;
-                IL_100:
+                    IL_100:
                     parts_COLOR = MaidParts.PARTS_COLOR.EYE_BROW;
                     goto IL_189;
-                IL_108:
+                    IL_108:
                     string text = string.Empty;
                     if (this._selectedEyeClorType == 0)
                     {
@@ -1794,12 +1964,15 @@ namespace COM3D2.PropMyItem.Plugin
                         parts_COLOR = MaidParts.PARTS_COLOR.EYE_R;
                         text = "右目";
                     }
+
                     if (GUI.Button(new Rect(posX, posY, (float)(fontSize * 8), controlHeight), text, buttonStyle))
                     {
-                        this._selectedEyeClorType = ((this._selectedEyeClorType == 2) ? 0 : (this._selectedEyeClorType + 1));
+                        this._selectedEyeClorType =
+                            ((this._selectedEyeClorType == 2) ? 0 : (this._selectedEyeClorType + 1));
                     }
+
                     num = controlHeight + 8f + posY;
-                IL_189:
+                    IL_189:
                     MaidParts.PartsColor partsColor = maid.Parts.GetPartsColor(parts_COLOR);
                     string[] array = new string[]
                     {
@@ -1842,18 +2015,23 @@ namespace COM3D2.PropMyItem.Plugin
                     {
                         float num3 = num + (float)i * (num2 * 2f + 8f);
                         Rect position = new Rect(posX, num3, (float)(fontSize * array[i].Length), num2);
-                        Rect position2 = new Rect(posX + (float)(fontSize * array[i].Length + 4), num3, (float)(fontSize * 4), num2);
+                        Rect position2 = new Rect(posX + (float)(fontSize * array[i].Length + 4), num3,
+                            (float)(fontSize * 4), num2);
                         Rect position3 = new Rect(posX, num3 + num2, (float)(fontSize * 2), num2);
-                        Rect position4 = new Rect(posX + (float)(fontSize * 2) + 4f, num3 + num2 + (float)((double)num2 * 0.25), 80f, num2);
-                        Rect position5 = new Rect(posX + 80f + (float)(fontSize * 2) + 8f, num3 + num2, (float)(fontSize * 2), num2);
+                        Rect position4 = new Rect(posX + (float)(fontSize * 2) + 4f,
+                            num3 + num2 + (float)((double)num2 * 0.25), 80f, num2);
+                        Rect position5 = new Rect(posX + 80f + (float)(fontSize * 2) + 8f, num3 + num2,
+                            (float)(fontSize * 2), num2);
                         GUI.Label(position, array[i], labelStyle);
                         GUI.Label(position2, array2[i].ToString(), labelStyle);
-                        float num4 = (float)((int)GUI.HorizontalSlider(position4, (float)array2[i], 0f, (float)array3[i]));
+                        float num4 =
+                            (float)((int)GUI.HorizontalSlider(position4, (float)array2[i], 0f, (float)array3[i]));
                         if (num4 != (float)array2[i])
                         {
                             array2[i] = (int)num4;
                             this.changeColor(partsColor, parts_COLOR, array2, maid);
                         }
+
                         if (GUI.Button(position3, "-", buttonStyle))
                         {
                             int num5 = array2[i] - 1;
@@ -1861,6 +2039,7 @@ namespace COM3D2.PropMyItem.Plugin
                             array2[i] = num5;
                             this.changeColor(partsColor, parts_COLOR, array2, maid);
                         }
+
                         if (GUI.Button(position5, "+", buttonStyle))
                         {
                             int num6 = array2[i] + 1;
@@ -1869,13 +2048,15 @@ namespace COM3D2.PropMyItem.Plugin
                             this.changeColor(partsColor, parts_COLOR, array2, maid);
                         }
                     }
+
                     posX += (float)(80 + fontSize * 2 + 8 + fontSize * 2 + 8);
                 }
             }
         }
 
         // Token: 0x06000041 RID: 65 RVA: 0x00006CA4 File Offset: 0x00004EA4
-        private void changeColor(MaidParts.PartsColor partsColor, MaidParts.PARTS_COLOR partsColorType, int[] values, Maid maid)
+        private void changeColor(MaidParts.PartsColor partsColor, MaidParts.PARTS_COLOR partsColorType, int[] values,
+            Maid maid)
         {
             partsColor.m_nMainHue = values[0];
             partsColor.m_nMainChroma = values[1];
@@ -1908,11 +2089,14 @@ namespace COM3D2.PropMyItem.Plugin
             PropMyItem.Log.LogMessage("[PropMyItem] LoadMenuFiles...st");
             try
             {
-                List<SMenuInfo> menuItems = new List<SMenuInfo>(); //COM3D2.PropMyItem.Plugin.Config.Instance.MenuItems;//new List<SMenuInfo>();
+                List<SMenuInfo>
+                    menuItems =
+                        new List<SMenuInfo>(); //COM3D2.PropMyItem.Plugin.Config.Instance.MenuItems;//new List<SMenuInfo>();
                 Dictionary<string, MenuInfo> dictionary = new Dictionary<string, MenuInfo>();
                 if (!isInit)
                 {
-                    using (List<SMenuInfo>.Enumerator enumerator = COM3D2.PropMyItem.Plugin.Config.Instance.MenuItems.GetEnumerator())
+                    using (List<SMenuInfo>.Enumerator enumerator =
+                           COM3D2.PropMyItem.Plugin.Config.Instance.MenuItems.GetEnumerator())
                     {
                         while (enumerator.MoveNext())
                         {
@@ -1927,7 +2111,6 @@ namespace COM3D2.PropMyItem.Plugin
                 }
                 else
                 {
-
                     this._mpnMenuListDictionary = new Dictionary<MPN, List<MenuInfo>>();
                     foreach (object obj in Enum.GetValues(typeof(MPN)))
                     {
@@ -1935,11 +2118,13 @@ namespace COM3D2.PropMyItem.Plugin
                         this._mpnMenuListDictionary.Add(key, new List<MenuInfo>());
                     }
                 }
+
                 //IL_CA:
                 if (dictionary.Count == 0)
                 {
                     PropMyItem.Log.LogMessage("[PropMyItem] 準備中...");
                 }
+
                 Dictionary<string, string> dictionary2 = new Dictionary<string, string>();
                 foreach (string text in UserConfig.Instance.FavList)
                 {
@@ -1948,6 +2133,7 @@ namespace COM3D2.PropMyItem.Plugin
                         dictionary2.Add(text.ToLower(), text);
                     }
                 }
+
                 Dictionary<string, string> dictionary3 = new Dictionary<string, string>();
                 foreach (string text2 in UserConfig.Instance.ColorLockList)
                 {
@@ -1956,11 +2142,12 @@ namespace COM3D2.PropMyItem.Plugin
                         dictionary3.Add(text2.ToLower(), text2);
                     }
                 }
+
                 List<MenuInfo> list = new List<MenuInfo>();
                 PropMyItem.Log.LogMessage("[PropMyItem] 完了1 " + menuItems.Count);
                 this.GetMainMenuFiles(ref list, dictionary, dictionary2, dictionary3, ref menuItems);
                 PropMyItem.Log.LogMessage("[PropMyItem] 完了2 " + menuItems.Count);
-                this.GetModFiles(ref list, dictionary, dictionary2, dictionary3, ref menuItems);// 여기서 에러남
+                this.GetModFiles(ref list, dictionary, dictionary2, dictionary3, ref menuItems); // 여기서 에러남
                 PropMyItem.Log.LogMessage("[PropMyItem] 完了3 " + menuItems.Count);
                 this.SetVariationMenu(dictionary2, dictionary3, ref list);
                 this.sort(false, true);
@@ -1971,6 +2158,7 @@ namespace COM3D2.PropMyItem.Plugin
                 {
                     PropMyItem.Log.LogMessage("[PropMyItem] 完了");
                 }
+
                 this._selectedFolder = 0;
                 this._selectedMPN = MPN.null_mpn;
                 this._selectedCategory = -1;
@@ -1981,19 +2169,23 @@ namespace COM3D2.PropMyItem.Plugin
                 this._selectedVariationItem = null;
                 this._scrollPosition.y = 0f;
                 MPN selectedMPN = MPN.head;
-                if (this._categoryMPNDic.TryGetValue(this._folders[this._selectedFolder].Categories[0], out selectedMPN))
+                if (this._categoryMPNDic.TryGetValue(this._folders[this._selectedFolder].Categories[0],
+                        out selectedMPN))
                 {
                     this._selectedMPN = selectedMPN;
                 }
+
                 this._selectedCategory = 0;
             }
             catch (Exception value)
             {
                 PropMyItem.Log.LogFatal(value);
             }
+
             _isLoading = false;
             _isForcedInit = false;
-            PropMyItem.Log.LogMessage("[PropMyItem] LoadMenuFiles...ed " + COM3D2.PropMyItem.Plugin.Config.Instance.MenuItems.Count);
+            PropMyItem.Log.LogMessage("[PropMyItem] LoadMenuFiles...ed " +
+                                      COM3D2.PropMyItem.Plugin.Config.Instance.MenuItems.Count);
             PropMyItem.Log.LogMessage("[PropMyItem] LoadMenuFiles...ed " + this._mpnMenuListDictionary.Count);
         }
 
@@ -2008,19 +2200,23 @@ namespace COM3D2.PropMyItem.Plugin
                     {
                         return 1;
                     }
+
                     if (!a.IsMod && b.IsMod)
                     {
                         return -1;
                     }
+
                     if (a.IsMod && b.IsMod)
                     {
                         return string.Compare(a.FilePath, b.FilePath);
                     }
                 }
+
                 if ((int)a.Priority != (int)b.Priority)
                 {
                     return (int)a.Priority - (int)b.Priority;
                 }
+
                 return string.Compare(a.ItemName, b.ItemName);
             };
             foreach (MPN key in this._mpnMenuListDictionary.Keys)
@@ -2032,12 +2228,13 @@ namespace COM3D2.PropMyItem.Plugin
                     {
                         if (menuInfo.VariationMenuList.Count > 1)
                         {
-                            menuInfo.VariationMenuList.Sort(delegate (MenuInfo a, MenuInfo b)
+                            menuInfo.VariationMenuList.Sort(delegate(MenuInfo a, MenuInfo b)
                             {
                                 if (a.ColorNumber != b.ColorNumber)
                                 {
                                     return a.ColorNumber - b.ColorNumber;
                                 }
+
                                 return string.Compare(a.FileName, b.FileName);
                             });
                         }
@@ -2047,7 +2244,8 @@ namespace COM3D2.PropMyItem.Plugin
         }
 
         // Token: 0x06000044 RID: 68 RVA: 0x000071A0 File Offset: 0x000053A0
-        private void GetMainMenuFiles(ref List<MenuInfo> variationMenuList, Dictionary<string, MenuInfo> loadItems, Dictionary<string, string> favDic, Dictionary<string, string> colorLockDic, ref List<SMenuInfo> saveItems)
+        private void GetMainMenuFiles(ref List<MenuInfo> variationMenuList, Dictionary<string, MenuInfo> loadItems,
+            Dictionary<string, string> favDic, Dictionary<string, string> colorLockDic, ref List<SMenuInfo> saveItems)
         {
             this._menuList.Clear();
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.menu", SearchOption.AllDirectories);
@@ -2060,6 +2258,7 @@ namespace COM3D2.PropMyItem.Plugin
                     dictionary.Add(key, text);
                 }
             }
+
             List<string> list = new List<string>(); //saveItems.Select(x=>x.FileName); //new List<string>();
 
             MenuDataBase menuDataBase = GameMain.Instance.MenuDataBase;
@@ -2070,25 +2269,34 @@ namespace COM3D2.PropMyItem.Plugin
             {
                 menuDataBase.SetIndex(j);
                 string menuFileName = menuDataBase.GetMenuFileName();
-                this.ParseMainMenuFile(menuFileName, list, ref variationMenuList, loadItems, dictionary, favDic, colorLockDic, ref saveItems);
+                this.ParseMainMenuFile(menuFileName, list, ref variationMenuList, loadItems, dictionary, favDic,
+                    colorLockDic, ref saveItems);
             }
+
             PropMyItem.Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles2 " + saveItems.Count);
-            PropMyItem.Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles2 " + saveItems[saveItems.Count - 1].FileName);
+            PropMyItem.Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles2 " +
+                                      saveItems[saveItems.Count - 1].FileName);
             foreach (string menuFile in GameUty.ModOnlysMenuFiles)
             {
-                ParseMainMenuFile(menuFile, list, ref variationMenuList, loadItems, dictionary, favDic, colorLockDic, ref saveItems);
+                ParseMainMenuFile(menuFile, list, ref variationMenuList, loadItems, dictionary, favDic, colorLockDic,
+                    ref saveItems);
             }
+
             PropMyItem.Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles3 " + saveItems.Count);
-            PropMyItem.Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles3 " + saveItems[saveItems.Count - 1].FileName);
+            PropMyItem.Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles3 " +
+                                      saveItems[saveItems.Count - 1].FileName);
         }
 
         // lmao
-        private void ParseMainMenuFile(string menuFile, List<string> list, ref List<MenuInfo> variationMenuList, Dictionary<string, MenuInfo> loadItems, Dictionary<string, string> dictionary, Dictionary<string, string> favDic, Dictionary<string, string> colorLockDic, ref List<SMenuInfo> saveItems)
+        private void ParseMainMenuFile(string menuFile, List<string> list, ref List<MenuInfo> variationMenuList,
+            Dictionary<string, MenuInfo> loadItems, Dictionary<string, string> dictionary,
+            Dictionary<string, string> favDic, Dictionary<string, string> colorLockDic, ref List<SMenuInfo> saveItems)
         {
             ReadOnlyDictionary<string, bool> havePartsItems = GameMain.Instance.CharacterMgr.status.havePartsItems;
             try
             {
-                if (menuFile.IndexOf("_i_man_") != 0 && menuFile.IndexOf("mbody") != 0 && menuFile.IndexOf("mhead") != 0 && !(Path.GetExtension(menuFile) != ".menu"))
+                if (menuFile.IndexOf("_i_man_") != 0 && menuFile.IndexOf("mbody") != 0 &&
+                    menuFile.IndexOf("mhead") != 0 && !(Path.GetExtension(menuFile) != ".menu"))
                 {
                     string fileName = Path.GetFileName(menuFile);
                     this._menuList.Add(fileName.ToLower());
@@ -2096,6 +2304,7 @@ namespace COM3D2.PropMyItem.Plugin
                     {
                         this._myPatternList.Add(fileName.ToLower());
                     }
+
                     if (!list.Contains(fileName))
                     {
                         MenuInfo menuInfo = null;
@@ -2103,6 +2312,7 @@ namespace COM3D2.PropMyItem.Plugin
                         {
                             menuInfo = MenuModParser.ParseMenu(menuFile);
                         }
+
                         if (menuInfo != null && menuInfo.MPN != MPN.null_mpn)
                         {
                             menuInfo.FileName = fileName;
@@ -2114,6 +2324,7 @@ namespace COM3D2.PropMyItem.Plugin
                             {
                                 menuInfo.IsShopTarget = false;
                             }
+
                             string filePath = menuFile;
                             if (dictionary.TryGetValue(fileName, out filePath))
                             {
@@ -2125,15 +2336,19 @@ namespace COM3D2.PropMyItem.Plugin
                                 menuInfo.IsMod = false;
                                 menuInfo.FilePath = fileName;
                             }
+
                             string empty = string.Empty;
                             if (this._menuMPNCategoryDic.TryGetValue(menuInfo.MPN, out empty))
                             {
                                 menuInfo.CategoryName = empty;
                             }
+
                             list.Add(fileName);
                             if (!string.IsNullOrEmpty(menuInfo.IconName))
                             {
-                                if (Regex.IsMatch(menuFile, "_z\\d{1,4}") || menuFile.Contains("_zurashi") || menuFile.Contains("_mekure") || menuFile.Contains("_porori") || menuFile.Contains("_back"))
+                                if (Regex.IsMatch(menuFile, "_z\\d{1,4}") || menuFile.Contains("_zurashi") ||
+                                    menuFile.Contains("_mekure") || menuFile.Contains("_porori") ||
+                                    menuFile.Contains("_back"))
                                 {
                                     variationMenuList.Add(menuInfo);
                                 }
@@ -2143,15 +2358,18 @@ namespace COM3D2.PropMyItem.Plugin
                                     {
                                         menuInfo.IsFavorite = true;
                                     }
+
                                     if (colorLockDic.ContainsKey(menuInfo.FileName))
                                     {
                                         menuInfo.IsColorLock = true;
                                     }
+
                                     menuInfo.ColorNumber = 0;
                                     menuInfo.VariationMenuList.Add(menuInfo);
                                     this._mpnMenuListDictionary[menuInfo.MPN].Add(menuInfo);
                                 }
                             }
+
                             saveItems.Add(new SMenuInfo(menuInfo));
                         }
                     }
@@ -2163,7 +2381,8 @@ namespace COM3D2.PropMyItem.Plugin
         }
 
         // Token: 0x06000045 RID: 69 RVA: 0x00007484 File Offset: 0x00005684
-        private void GetModFiles(ref List<MenuInfo> variationMenuList, Dictionary<string, MenuInfo> loadItems, Dictionary<string, string> favDic, Dictionary<string, string> colorLockDic, ref List<SMenuInfo> saveItems)
+        private void GetModFiles(ref List<MenuInfo> variationMenuList, Dictionary<string, MenuInfo> loadItems,
+            Dictionary<string, string> favDic, Dictionary<string, string> colorLockDic, ref List<SMenuInfo> saveItems)
         {
             List<string> list = new List<string>();
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.mod", SearchOption.AllDirectories);
@@ -2177,6 +2396,7 @@ namespace COM3D2.PropMyItem.Plugin
                     dictionary.Add(fileName, text);
                 }
             }
+
             foreach (string text2 in list)
             {
                 try
@@ -2187,8 +2407,9 @@ namespace COM3D2.PropMyItem.Plugin
                         string fileName2 = Path.GetFileName(text2);
                         if (!loadItems.TryGetValue(fileName2, out menuInfo))
                         {
-                            menuInfo = MenuModParser.parseMod(text2);// 여기서 오류남
+                            menuInfo = MenuModParser.parseMod(text2); // 여기서 오류남
                         }
+
                         menuInfo.FileName = fileName2;
                         menuInfo.IsShopTarget = false;
                         menuInfo.IsMod = true;
@@ -2199,8 +2420,10 @@ namespace COM3D2.PropMyItem.Plugin
                         {
                             menuInfo.CategoryName = empty;
                         }
+
                         string text3 = fileName2.ToLower();
-                        if (Regex.IsMatch(text3, "_z\\d{1,4}") || text3.Contains("_porori") || text3.Contains("_zurashi") || text3.Contains("_mekure") || text3.Contains("_back"))
+                        if (Regex.IsMatch(text3, "_z\\d{1,4}") || text3.Contains("_porori") ||
+                            text3.Contains("_zurashi") || text3.Contains("_mekure") || text3.Contains("_back"))
                         {
                             variationMenuList.Add(menuInfo);
                         }
@@ -2210,14 +2433,17 @@ namespace COM3D2.PropMyItem.Plugin
                             {
                                 menuInfo.IsFavorite = true;
                             }
+
                             if (colorLockDic.ContainsKey(menuInfo.FileName.ToLower()))
                             {
                                 menuInfo.IsColorLock = true;
                             }
+
                             menuInfo.ColorNumber = 0;
                             menuInfo.VariationMenuList.Add(menuInfo);
                             this._mpnMenuListDictionary[menuInfo.MPN].Add(menuInfo);
                         }
+
                         saveItems.Add(new SMenuInfo(menuInfo));
                     }
                 }
@@ -2229,7 +2455,8 @@ namespace COM3D2.PropMyItem.Plugin
         }
 
         // Token: 0x06000046 RID: 70 RVA: 0x000076B4 File Offset: 0x000058B4
-        private void SetVariationMenu(Dictionary<string, string> favDic, Dictionary<string, string> colorLockDic, ref List<MenuInfo> variationMenuList)
+        private void SetVariationMenu(Dictionary<string, string> favDic, Dictionary<string, string> colorLockDic,
+            ref List<MenuInfo> variationMenuList)
         {
             List<MenuInfo> list = new List<MenuInfo>();
             List<MenuInfo> list2 = new List<MenuInfo>();
@@ -2245,8 +2472,8 @@ namespace COM3D2.PropMyItem.Plugin
                     {
                         int.TryParse(array[1].Remove(0, 3).Split(new char[]
                         {
-                        '.',
-                        '_'
+                            '.',
+                            '_'
                         })[0], out colorNumber);
                     }
                 }
@@ -2255,6 +2482,7 @@ namespace COM3D2.PropMyItem.Plugin
                     PropMyItem.Log.LogMessage("" + fileName);
                     PropMyItem.Log.LogMessage("" + e.ToString());
                 }
+
                 menuInfo.ColorNumber = colorNumber;
 
                 string text = Regex.Replace(fileName, "_z\\d{1,4}", "");
@@ -2275,23 +2503,26 @@ namespace COM3D2.PropMyItem.Plugin
                             break;
                         }
                     }
+
                     if (!flag)
                     {
                         if (favDic.ContainsKey(menuInfo.FileName.ToLower()))
                         {
                             menuInfo.IsFavorite = true;
                         }
+
                         if (colorLockDic.ContainsKey(menuInfo.FileName.ToLower()))
                         {
                             menuInfo.IsColorLock = true;
                         }
+
                         menuInfo.ColorNumber = 0;
                         menuInfo.VariationMenuList.Add(menuInfo);
                         list2.Add(menuInfo);
                     }
                 }
-
             }
+
             foreach (MenuInfo menuInfo3 in list2)
             {
                 this._mpnMenuListDictionary[menuInfo3.MPN].Add(menuInfo3);
@@ -2315,7 +2546,8 @@ namespace COM3D2.PropMyItem.Plugin
                             List<MenuInfo> list3 = new List<MenuInfo>();
                             if (this._mpnMenuListDictionary.TryGetValue(menuInfo2.ColorSetMPN, out list3))
                             {
-                                string pattern = Regex.Replace(menuInfo2.ColorSetMenuName, ".", new MatchEvaluator(CommonUtil.WildCardMatchEvaluator));
+                                string pattern = Regex.Replace(menuInfo2.ColorSetMenuName, ".",
+                                    new MatchEvaluator(CommonUtil.WildCardMatchEvaluator));
                                 foreach (MenuInfo menuInfo3 in list3)
                                 {
                                     if (Regex.IsMatch(menuInfo3.FileName, pattern, RegexOptions.IgnoreCase))
@@ -2324,6 +2556,7 @@ namespace COM3D2.PropMyItem.Plugin
                                     }
                                 }
                             }
+
                             menuInfo2.ColorSetMenuList.AddRange(list2);
                         }
                     }
