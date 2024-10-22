@@ -108,3 +108,9 @@ _UpgradeReport_Files/
 Backup*/
 UpgradeLog*.XML
 
+/.idea
+/packages/BepInEx.Analyzers.1.0.8
+/packages/HarmonyX.2.7.0
+/packages/Mono.Cecil.0.10.4
+/packages/MonoMod.RuntimeDetour.21.12.13.1
+/packages/MonoMod.Utils.21.12.13.1

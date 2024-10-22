@@ -353,6 +353,7 @@ namespace COM3D2.PropMyItem.Plugin
             this._windowRect = GUI.Window(PluginInfo.WindowID, this._windowRect, new GUI.WindowFunction(this.GuiFunc), "PropMyItem", GuiStyles.WindowStyle);
         }
 
+
         // Token: 0x06000030 RID: 48 RVA: 0x00003B40 File Offset: 0x00001D40
         private void GuiSettingFunc(int windowID)
         {
@@ -502,6 +503,11 @@ namespace COM3D2.PropMyItem.Plugin
         {
             try
             {
+                // Add "X" button for close window in the top right corner
+                if (GUI.Button(new Rect(_windowRect.width - 25, 5, 20, 20), "X")) {
+                    this._isVisible = false;  // Set visibility to false to close window
+                }
+
                 string text = this._isMinimum ? "" : "最小化";
                 Rect position = new Rect(GuiStyles.Margin, 0f, (float)(GuiStyles.FontSize * (text.Length + 2)), GuiStyles.ControlHeight);
                 this._isMinimum = GUI.Toggle(position, this._isMinimum, text, GuiStyles.ToggleStyle);
