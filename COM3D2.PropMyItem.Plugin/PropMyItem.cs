@@ -61,20 +61,12 @@ namespace COM3D2.PropMyItem.Plugin
             {
                 "肌",
                 "乳首",
+                "chikubicolor",
                 "タトゥー",
                 "アンダーヘア",
                 "ボディ",
+                "指甲",
                 "moza"
-            }));
-            this._folders.Add(new PropMyItem.FolderMenu("むね", new string[]
-            {
-                "MuneL",
-                "MuneS",
-                "MuneTare",
-                "MuneUpDown",
-                "MuneSoft",
-                "MuneYori",
-                "chikubicolor"
             }));
             this._folders.Add(new PropMyItem.FolderMenu("服装", new string[]
             {
@@ -94,7 +86,6 @@ namespace COM3D2.PropMyItem.Plugin
                 " 前髪 ",
                 "メガネ",
                 "アイマスク",
-                "accnail",
                 "鼻",
                 "耳",
                 "手袋",
@@ -183,16 +174,10 @@ namespace COM3D2.PropMyItem.Plugin
             this._categoryMPNDic.Add("鞏膜", MPN.folder_eyewhite);
 
             this._categoryMPNDic.Add("accanl", MPN.accanl);
-            this._categoryMPNDic.Add("accnail", MPN.accnail);
+            this._categoryMPNDic.Add("指甲", MPN.accnail);
             this._categoryMPNDic.Add("accvag", MPN.accvag);
             this._categoryMPNDic.Add("moza", MPN.moza);
 
-            this._categoryMPNDic.Add("MuneL", MPN.MuneL);
-            this._categoryMPNDic.Add("MuneS", MPN.MuneS);
-            this._categoryMPNDic.Add("MuneTare", MPN.MuneTare);
-            this._categoryMPNDic.Add("MuneUpDown", MPN.MuneUpDown);
-            this._categoryMPNDic.Add("MuneSoft", MPN.MuneYawaraka);
-            this._categoryMPNDic.Add("MuneYori", MPN.MuneYori);
             this._categoryMPNDic.Add("chikubicolor", MPN.chikubicolor);
 
             foreach (string text in this._categoryMPNDic.Keys)
