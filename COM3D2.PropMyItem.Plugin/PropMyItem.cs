@@ -41,6 +41,7 @@ namespace COM3D2.PropMyItem.Plugin
                 "眉",
                 "目",
                 "目ハイライト",
+                "鞏膜",
                 "上まつげ",
                 "下まつげ",
                 "二重まぶた",
@@ -72,7 +73,8 @@ namespace COM3D2.PropMyItem.Plugin
                 "MuneTare",
                 "MuneUpDown",
                 "MuneSoft",
-                "MuneYori"
+                "MuneYori",
+                "chikubicolor"
             }));
             this._folders.Add(new PropMyItem.FolderMenu("服装", new string[]
             {
@@ -178,6 +180,8 @@ namespace COM3D2.PropMyItem.Plugin
             this._categoryMPNDic.Add("下着", MPN.set_underwear);
             this._categoryMPNDic.Add("\u3000身体\u3000", MPN.set_body);
 
+            this._categoryMPNDic.Add("鞏膜", MPN.folder_eyewhite);
+
             this._categoryMPNDic.Add("accanl", MPN.accanl);
             this._categoryMPNDic.Add("accnail", MPN.accnail);
             this._categoryMPNDic.Add("accvag", MPN.accvag);
@@ -189,6 +193,7 @@ namespace COM3D2.PropMyItem.Plugin
             this._categoryMPNDic.Add("MuneUpDown", MPN.MuneUpDown);
             this._categoryMPNDic.Add("MuneSoft", MPN.MuneYawaraka);
             this._categoryMPNDic.Add("MuneYori", MPN.MuneYori);
+            this._categoryMPNDic.Add("chikubicolor", MPN.chikubicolor);
 
             foreach (string text in this._categoryMPNDic.Keys)
             {
