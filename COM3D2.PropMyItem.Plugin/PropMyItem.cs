@@ -65,6 +65,15 @@ namespace COM3D2.PropMyItem.Plugin
                 "ボディ",
                 "moza"
             }));
+            this._folders.Add(new PropMyItem.FolderMenu("むね", new string[]
+            {
+                "MuneL",
+                "MuneS",
+                "MuneTare",
+                "MuneUpDown",
+                "MuneSoft",
+                "MuneYori"
+            }));
             this._folders.Add(new PropMyItem.FolderMenu("服装", new string[]
             {
                 "帽子",
@@ -174,7 +183,12 @@ namespace COM3D2.PropMyItem.Plugin
             this._categoryMPNDic.Add("accvag", MPN.accvag);
             this._categoryMPNDic.Add("moza", MPN.moza);
 
-
+            this._categoryMPNDic.Add("MuneL", MPN.MuneL);
+            this._categoryMPNDic.Add("MuneS", MPN.MuneS);
+            this._categoryMPNDic.Add("MuneTare", MPN.MuneTare);
+            this._categoryMPNDic.Add("MuneUpDown", MPN.MuneUpDown);
+            this._categoryMPNDic.Add("MuneSoft", MPN.MuneYawaraka);
+            this._categoryMPNDic.Add("MuneYori", MPN.MuneYori);
 
             foreach (string text in this._categoryMPNDic.Keys)
             {
