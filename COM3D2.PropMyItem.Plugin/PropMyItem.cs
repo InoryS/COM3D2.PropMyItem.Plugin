@@ -112,7 +112,7 @@ namespace COM3D2.PropMyItem.Plugin
                 "服 / 身体",
                 "服",
                 "身体",
-                "全て"
+                "\u3000全て\u3000"
             }));
             this._folders.Add(new PropMyItem.FolderMenu("全て", new string[0]));
             this._folders.Add(new PropMyItem.FolderMenu("選択中", new string[0]));
@@ -807,7 +807,7 @@ if (EnumUtil.TryParse<KeyCode>(UserConfig.Instance.GuiVisibleKey, true, out keyC
                         {
                             if (this._folders[this._selectedFolder].Name == "プリセット")
                             {
-                                if (this._folders[this._selectedFolder].Categories[i] == "전부")
+                                if (this._folders[this._selectedFolder].Categories[i] == "\u3000全て\u3000")
                                 {
                                     this._selectedPresetList = GameMain.Instance.CharacterMgr.PresetListLoad();
                                 }
