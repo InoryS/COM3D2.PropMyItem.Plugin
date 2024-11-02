@@ -41,9 +41,9 @@ namespace COM3D2.PropMyItem.Plugin
                 "眉",
                 "目",
                 "目ハイライト",
-                "속눈썹위",
-                "속눈썹아래",
-                "쌍커플",
+                "上まつげ",
+                "下まつげ",
+                "二重まぶた",
                 "ほくろ",
                 "唇",
                 "歯"
@@ -62,7 +62,8 @@ namespace COM3D2.PropMyItem.Plugin
                 "乳首",
                 "タトゥー",
                 "アンダーヘア",
-                "ボディ"
+                "ボディ",
+                "moza"
             }));
             this._folders.Add(new PropMyItem.FolderMenu("服装", new string[]
             {
@@ -82,6 +83,7 @@ namespace COM3D2.PropMyItem.Plugin
                 " 前髪 ",
                 "メガネ",
                 "アイマスク",
+                "accnail",
                 "鼻",
                 "耳",
                 "手袋",
@@ -93,6 +95,8 @@ namespace COM3D2.PropMyItem.Plugin
                 "へそ",
                 "足首",
                 "背中",
+                "accanl",
+                "accvag",
                 "しっぽ",
                 "前穴"
             }));
@@ -101,14 +105,14 @@ namespace COM3D2.PropMyItem.Plugin
                 "メイド服",
                 "コスチューム",
                 "下着",
-                "체형"
+                "\u3000身体\u3000"
             }));
             this._folders.Add(new PropMyItem.FolderMenu("プリセット", new string[]
             {
                 "服 / 身体",
                 "服",
                 "身体",
-                "전부"
+                "全て"
             }));
             this._folders.Add(new PropMyItem.FolderMenu("全て", new string[0]));
             this._folders.Add(new PropMyItem.FolderMenu("選択中", new string[0]));
@@ -120,9 +124,9 @@ namespace COM3D2.PropMyItem.Plugin
             this._categoryMPNDic.Add("唇", MPN.lip);
             this._categoryMPNDic.Add("歯", MPN.accha);
 
-            this._categoryMPNDic.Add("속눈썹위", MPN.folder_matsuge_up);
-            this._categoryMPNDic.Add("속눈썹아래", MPN.folder_matsuge_low);
-            this._categoryMPNDic.Add("쌍커플", MPN.folder_futae);
+            this._categoryMPNDic.Add("上まつげ", MPN.folder_matsuge_up);
+            this._categoryMPNDic.Add("下まつげ", MPN.folder_matsuge_low);
+            this._categoryMPNDic.Add("二重まぶた", MPN.folder_futae);
 
             this._categoryMPNDic.Add("前髪", MPN.hairf);
             this._categoryMPNDic.Add("後髪", MPN.hairr);
@@ -160,10 +164,18 @@ namespace COM3D2.PropMyItem.Plugin
             this._categoryMPNDic.Add("背中", MPN.accsenaka);
             this._categoryMPNDic.Add("しっぽ", MPN.accshippo);
             this._categoryMPNDic.Add("前穴", MPN.accxxx);
-            this._categoryMPNDic.Add("メイド服", MPN.set_maidwear); //메이드복
+            this._categoryMPNDic.Add("メイド服", MPN.set_maidwear);
             this._categoryMPNDic.Add("コスチューム", MPN.set_mywear);
             this._categoryMPNDic.Add("下着", MPN.set_underwear);
-            this._categoryMPNDic.Add("체형", MPN.set_body);
+            this._categoryMPNDic.Add("\u3000身体\u3000", MPN.set_body);
+
+            this._categoryMPNDic.Add("accanl", MPN.accanl);
+            this._categoryMPNDic.Add("accnail", MPN.accnail);
+            this._categoryMPNDic.Add("accvag", MPN.accvag);
+            this._categoryMPNDic.Add("moza", MPN.moza);
+
+
+
             foreach (string text in this._categoryMPNDic.Keys)
             {
                 this._menuMPNCategoryDic.Add(this._categoryMPNDic[text], text);

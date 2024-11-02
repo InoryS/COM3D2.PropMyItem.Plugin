@@ -114,3 +114,6 @@ UpgradeLog*.XML
 /packages/Mono.Cecil.0.10.4
 /packages/MonoMod.RuntimeDetour.21.12.13.1
 /packages/MonoMod.Utils.21.12.13.1
+*.nupkg
+/packages/BepInEx.BaseLib.5.4.19
+/packages/BepInEx.Core.5.4.19
