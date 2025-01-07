@@ -218,12 +218,15 @@ namespace COM3D2.PropMyItem.Plugin
             PropMyItem.Log.LogMessage("[PropMyItem] Start");
             GameMain.Instance.StartCoroutine(CheckMenuDatabase());
             SceneManager.sceneLoaded += this.OnSceneLoaded;
-            //try
-            //{
-            //}
-            //catch (Exception)
-            //{
-            //}
+
+            // add button to GearMenu
+            GearMenu.Buttons.Add(
+                "HighHeel",
+                "Toggle COM3D2.HighHeel.Plugin GUI",
+                Convert.FromBase64String(
+                    "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAAcJQTFRF////+fn57u7u3d3dzc3NxsbGxcXFzMzMpqamo6Ojn5+f2dnZqKioxMTEtbW1vLy8ubm55+fnqampvr6+j4+P4uLikZGR1NTUi4uL8fHx6urqkpKS4eHhr6+v5ubmCwsLdHR0mpqaJiYm/v7+Dg4OWVlZ3t7eKCgomZmZe3t7PT09wcHBFxcXl5eXJSUly8vLNDQ0hYWFkJCQ+/v7ERERg4ODQUFBz8/Pv7+/QEBAeXl5nJycysrKTExMfHx8IyMjeHh4nZ2dWlpaWFhYiIiIEhIS9PT0U1NTq6ur+Pj4V1dX9vb2Hx8fHBwc9/f3RkZGt7e3yMjIQkJCVFRUR0dHc3NzUlJSrq6uLCwsS0tLRUVFenp6urq6Y2NjZWVl19fXgYGB6Ojo1tbWpKSk1dXV39/fHh4eKSkpPz8/9fX1f39/dXV1VVVVampqwMDApaWlXV1doKCgXl5e5OTkGxsbdnZ2p6en/Pz8EBAQLi4u09PTtra2X19fw8PDW1tbd3d3ycnJQ0ND2trauLi4ZmZm8vLyk5OTcHBwgICA6+vr+vr6x8fH29vbZ2dnKysr8/Pz4ODghoaG7e3tjY2Nu7u7YGBgHfa81gAAAbdJREFUeJxjZCAAGIlQwAgCGCr/M/wHAZA4EytIASYASv/+B1LAzfj9L1bTmTn/fwUp4P3/BYf9PIyfQQpYOT/hUMD3/TdIAT/jB0GQO18ziIHd+/39fxnGz2wcjxgE/n8EKRBg+MAiDZR4L8TI+FICpOSaNuNfFsYr/4AyUAX6jBcYDEFq7ooonmYwA7KOM1gxHkUosGE8zGDNfNjuIIMD434Gp3PMBnsZjIT2ICngZNzlzsj49BIDp+M2b8ZLX60YN/kzbkAoCATZvNr7+j0GZXFmScaV/J5A/lIGhAJWhdso/othXAyiEArYbPahKBDwW4SqAEdAkaAgnnGBmvV8PAokPedZac7FoyDlDyhNrA25/VN3w7PsecmM80TNJCYhe9Nur4P+RIaCtZrajH0h7w3Omrw4xXEJSQGv6b5Sxq5yxk8MF+zboxTaqhlbGNKfb0IoqGVsqp/8ztj1AAODR0MjY10zYw1DhG41QoG264Q2xo3CfPpAl5SahZUE2BYz9DEWQhUAE8yE3seSFTc19rgeY7TKKZz4r2HKG4apW7ZDEwzBJEcw0RJM9gQzDsGshx8QVAAAyd+zIah/5QEAAAAASUVORK5CYII="),
+                (go) => ToggleGUI()
+            );
         }
 
         // Token: 0x0600002D RID: 45 RVA: 0x0000383C File Offset: 0x00001A3C
@@ -278,15 +281,7 @@ if (EnumUtil.TryParse<KeyCode>(UserConfig.Instance.GuiVisibleKey, true, out keyC
             //PropMyItem.Log.LogMessage($"[PropMyItem] input key {ShowCounter.Value.Modifiers} {ShowCounter.Value.MainKey}");
             if (ShowCounter.Value.IsUp())
             {
-                if (_menuFilesReady)
-                {
-                    this._isVisible = !this._isVisible;
-                    this._isMinimum = !this._isVisible;
-                }
-                else
-                {
-                    PropMyItem.Log.LogMessage("[PropMyItem] Menu files are not ready yet");
-                }
+                ToggleGUI();
             }
             else
             {
@@ -324,6 +319,19 @@ if (EnumUtil.TryParse<KeyCode>(UserConfig.Instance.GuiVisibleKey, true, out keyC
             }
         }
 
+
+        public void ToggleGUI()
+        {
+            if (_menuFilesReady)
+            {
+                this._isVisible = !this._isVisible;
+                this._isMinimum = !this._isVisible;
+            }
+            else
+            {
+                PropMyItem.Log.LogMessage("[PropMyItem] Menu files are not ready yet");
+            }
+        }
 
         // Token: 0x0600002F RID: 47 RVA: 0x00003A88 File Offset: 0x00001C88
         public void OnGUI()

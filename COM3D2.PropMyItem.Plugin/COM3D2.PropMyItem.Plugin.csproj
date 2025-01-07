@@ -90,6 +90,7 @@
     <Compile Include="SavePreset.cs" />
     <Compile Include="SMenuInfo.cs" />
     <Compile Include="UserConfig.cs" />
+    <Compile Include="GearMenu.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
