@@ -16,4 +16,4 @@ if you have `Sybaris\UnityInjector` version, please remove that first, and you w
 # Plguin Info
 This is Bepinex plugin for COM3D2.
 
-install to COM3D2\BepInEx\plugins\
+install dll to `COM3D2\BepInEx\plugins\`
