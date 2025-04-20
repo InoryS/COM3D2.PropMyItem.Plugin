@@ -9,35 +9,22 @@ namespace COM3D2.PropMyItem.Plugin
     // Token: 0x02000004 RID: 4
     public class Config
     {
+        // Token: 0x04000006 RID: 6
+        private static Config _config;
+
+        // Token: 0x04000005 RID: 5
+
+        // Token: 0x04000004 RID: 4
+
         // Token: 0x17000001 RID: 1
         // (get) Token: 0x06000009 RID: 9 RVA: 0x0000249B File Offset: 0x0000069B
         // (set) Token: 0x0600000A RID: 10 RVA: 0x000024A3 File Offset: 0x000006A3
-        public List<string> TargetBGList
-        {
-            get
-            {
-                return this._targetBGList;
-            }
-            set
-            {
-                this._targetBGList = value;
-            }
-        }
+        public List<string> TargetBGList { get; set; } = new List<string>();
 
         // Token: 0x17000002 RID: 2
         // (get) Token: 0x0600000B RID: 11 RVA: 0x000024AC File Offset: 0x000006AC
         // (set) Token: 0x0600000C RID: 12 RVA: 0x000024B4 File Offset: 0x000006B4
-        public List<SMenuInfo> MenuItems
-        {
-            get
-            {
-                return this._menuItems;
-            }
-            set
-            {
-                this._menuItems = value;
-            }
-        }
+        public List<SMenuInfo> MenuItems { get; set; } = new List<SMenuInfo>();
 
         // Token: 0x17000003 RID: 3
         // (get) Token: 0x0600000D RID: 13 RVA: 0x000024C0 File Offset: 0x000006C0
@@ -45,21 +32,18 @@ namespace COM3D2.PropMyItem.Plugin
         {
             get
             {
-                if (Config._config == null)
+                if (_config == null)
                 {
-                    string text = Directory.GetCurrentDirectory() + "\\Sybaris\\UnityInjector\\Config\\PropMyItem.xml";
-                    Config._config = new Config();
-                    Config._config.SetDefault();
+                    var text = Directory.GetCurrentDirectory() + "\\Sybaris\\UnityInjector\\Config\\PropMyItem.xml";
+                    _config = new Config();
+                    _config.SetDefault();
                     if (File.Exists(text))
-                    {
-                        Config._config.Load(text);
-                    }
+                        _config.Load(text);
                     else
-                    {
-                        Config._config.Save();
-                    }
+                        _config.Save();
                 }
-                return Config._config;
+
+                return _config;
             }
         }
 
@@ -68,18 +52,18 @@ namespace COM3D2.PropMyItem.Plugin
         {
             try
             {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Config));
-                using (StreamReader streamReader = new StreamReader(filePath, new UTF8Encoding(false)))
+                var xmlSerializer = new XmlSerializer(typeof(Config));
+                using (var streamReader = new StreamReader(filePath, new UTF8Encoding(false)))
                 {
-                    Config config = (Config)xmlSerializer.Deserialize(streamReader);
-                    this.TargetBGList.Clear();
-                    this.TargetBGList.AddRange(config.TargetBGList.ToArray());
-                    this.MenuItems = config.MenuItems;
+                    var config = (Config)xmlSerializer.Deserialize(streamReader);
+                    TargetBGList.Clear();
+                    TargetBGList.AddRange(config.TargetBGList.ToArray());
+                    MenuItems = config.MenuItems;
                 }
             }
             catch (Exception)
             {
-                this.SetDefault();
+                SetDefault();
             }
         }
 
@@ -88,7 +72,7 @@ namespace COM3D2.PropMyItem.Plugin
         {
             try
             {
-                string[] collection = new string[]
+                string[] collection =
                 {
                     "MyRoom",
                     "MyRoom_Night",
@@ -109,7 +93,7 @@ namespace COM3D2.PropMyItem.Plugin
                     "HeroineRoom_C",
                     "HeroineRoom_C_night"
                 };
-                this.TargetBGList.AddRange(collection);
+                TargetBGList.AddRange(collection);
             }
             catch (Exception)
             {
@@ -119,8 +103,8 @@ namespace COM3D2.PropMyItem.Plugin
         // Token: 0x06000010 RID: 16 RVA: 0x00002684 File Offset: 0x00000884
         public void Save()
         {
-            string filePath = Directory.GetCurrentDirectory() + "\\Sybaris\\UnityInjector\\Config\\PropMyItem.xml";
-            this.Save(filePath);
+            var filePath = Directory.GetCurrentDirectory() + "\\Sybaris\\UnityInjector\\Config\\PropMyItem.xml";
+            Save(filePath);
         }
 
         // Token: 0x06000011 RID: 17 RVA: 0x000026A8 File Offset: 0x000008A8
@@ -128,8 +112,8 @@ namespace COM3D2.PropMyItem.Plugin
         {
             try
             {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Config));
-                StreamWriter streamWriter = new StreamWriter(filePath, false, new UTF8Encoding(false));
+                var xmlSerializer = new XmlSerializer(typeof(Config));
+                var streamWriter = new StreamWriter(filePath, false, new UTF8Encoding(false));
                 xmlSerializer.Serialize(streamWriter, this);
                 streamWriter.Close();
             }
@@ -138,14 +122,5 @@ namespace COM3D2.PropMyItem.Plugin
                 PropMyItem.Log.LogMessage(value);
             }
         }
-
-        // Token: 0x04000004 RID: 4
-        private List<string> _targetBGList = new List<string>();
-
-        // Token: 0x04000005 RID: 5
-        private List<SMenuInfo> _menuItems = new List<SMenuInfo>();
-
-        // Token: 0x04000006 RID: 6
-        private static Config _config;
     }
 }
