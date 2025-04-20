@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace COM3D2.PropMyItem.Plugin
+﻿namespace COM3D2.PropMyItem.Plugin
 {
     // Token: 0x02000009 RID: 9
     public struct PluginInfo
@@ -9,7 +7,7 @@ namespace COM3D2.PropMyItem.Plugin
         public const string PluginName = "PropMyItem-Inory";
 
         // Token: 0x04000026 RID: 38
-        public const string PluginVersion = "2.4.0.5";
+        public const string PluginVersion = "2.4.0.6";
 
         // Token: 0x04000027 RID: 39
         public const int WindowID = 4511;
