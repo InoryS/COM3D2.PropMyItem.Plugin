@@ -296,34 +296,43 @@ public class PropMyItem : BaseUnityPlugin
     private Vector2 _dragStartMousePosition;
     private Vector2 _dragStartWindowPosition;
 
+    // 本帧 MouseDown 时的鼠标位置（逻辑屏幕坐标），点中空白处才拿它当拖动起点
+    private Vector2 _mouseDownPosition;
+
     /// <summary>
     ///     代替 GUI.DragWindow()。它按 Event.delta 移动窗口，而 delta 是屏幕像素、
     ///     窗口矩形却在缩放后的逻辑坐标里，高倍率下窗口会跑得比鼠标快。
-    ///     这里改用 Input.mousePosition（一定是屏幕坐标）除以倍数换算，任何倍率都跟手。
-    ///     只在窗口函数末尾调用：控件已经处理过 MouseDown 时会占用 hotControl，据此区分点击与拖动。
+    ///     这里全程用 IMGUI 事件的坐标（OnGUI 里已经是逻辑坐标，和 _windowRect 同一套）。
+    ///     注意不能用 Input.GetMouseButton 判断按下状态：ShowCounterHandler 里每帧都会调
+    ///     Input.ResetInputAxes()，按键会在 OnGUI 时读成未按下。
+    /// </summary>
+    private void HandleWindowDragEvents()
+    {
+        var current = Event.current;
+
+        if (current.type == EventType.MouseDown && current.button == 0)
+            _mouseDownPosition = current.mousePosition;
+        else if (current.type == EventType.MouseUp)
+            _isDraggingWindow = false;
+
+        if (!_isDraggingWindow) return;
+
+        _windowRect.position = _dragStartWindowPosition +
+                               (current.mousePosition - _dragStartMousePosition);
+    }
+
+    /// <summary>
+    ///     在窗口函数末尾调用。控件处理过的 MouseDown 会被 Event.Use() 变成 Used，
+    ///     只有点在空白处才还是 MouseDown，据此区分点击与拖动。
+    ///     （不能用 GUIUtility.hotControl 判断，窗口自己会占住它。）
     /// </summary>
     private void BeginWindowDragIfNeeded()
     {
         if (Event.current.type != EventType.MouseDown || Event.current.button != 0) return;
-        if (GUIUtility.hotControl != 0) return;
 
         _isDraggingWindow = true;
-        _dragStartMousePosition = Input.mousePosition;
+        _dragStartMousePosition = _mouseDownPosition;
         _dragStartWindowPosition = _windowRect.position;
-    }
-
-    private void UpdateWindowDrag(float scale)
-    {
-        if (!_isDraggingWindow) return;
-
-        if (!Input.GetMouseButton(0))
-        {
-            _isDraggingWindow = false;
-            return;
-        }
-
-        _windowRect.position = _dragStartWindowPosition +
-                               ((Vector2)Input.mousePosition - _dragStartMousePosition) / scale;
     }
 
     public void OnGUI()
@@ -346,7 +355,7 @@ public class PropMyItem : BaseUnityPlugin
             var screenHeight = Screen.height / scale;
 
             // 拖动要在 GUI.Window 之前生效，它用的是传进去的矩形
-            UpdateWindowDrag(scale);
+            HandleWindowDragEvents();
 
             // Calculate the new window size
             float newWidth = 800;
