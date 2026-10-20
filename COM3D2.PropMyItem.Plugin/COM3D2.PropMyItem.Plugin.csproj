@@ -46,18 +46,18 @@
     <!-- COM3D2 构建配置 -->
     <When Condition="'$(Configuration)|$(Platform)' == 'COM3D2-Debug|AnyCPU'">
       <PropertyGroup>
+        <DebugType>full</DebugType>
         <DefineConstants>COM3D2;DEBUG;TRACE</DefineConstants>
         <Optimize>false</Optimize>
-        <DebugType>full</DebugType>
         <OutputPath>bin\Debug\COM3D2\</OutputPath>
         <TargetFramework>net35</TargetFramework>
       </PropertyGroup>
     </When>
     <When Condition="'$(Configuration)|$(Platform)' == 'COM3D2-Release|AnyCPU'">
       <PropertyGroup>
+        <DebugType>pdbonly</DebugType>
         <DefineConstants>COM3D2</DefineConstants>
         <Optimize>true</Optimize>
-        <DebugType>pdbonly</DebugType>
         <OutputPath>bin\Release\COM3D2\</OutputPath>
         <TargetFramework>net35</TargetFramework>
       </PropertyGroup>
@@ -66,18 +66,18 @@
     <!-- COM3D2.5 构建配置 -->
     <When Condition="'$(Configuration)|$(Platform)' == 'COM3D25_UNITY_2022-Debug|AnyCPU'">
       <PropertyGroup>
+        <DebugType>full</DebugType>
         <DefineConstants>COM3D25_UNITY_2022;DEBUG;TRACE</DefineConstants>
         <Optimize>false</Optimize>
-        <DebugType>full</DebugType>
         <OutputPath>bin\Debug\COM3D25\</OutputPath>
         <TargetFramework>net48</TargetFramework>
       </PropertyGroup>
     </When>
     <When Condition="'$(Configuration)|$(Platform)' == 'COM3D25_UNITY_2022-Release|AnyCPU'">
       <PropertyGroup>
+        <DebugType>pdbonly</DebugType>
         <DefineConstants>COM3D25_UNITY_2022</DefineConstants>
         <Optimize>true</Optimize>
-        <DebugType>pdbonly</DebugType>
         <OutputPath>bin\Release\COM3D25\</OutputPath>
         <TargetFramework>net48</TargetFramework>
       </PropertyGroup>
@@ -91,38 +91,38 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <Configurations>COM3D2-Debug;COM3D2-Release;COM3D25_UNITY_2022-Debug;COM3D25_UNITY_2022-Release</Configurations>
-    <Platforms>AnyCPU</Platforms>
-
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
     <AssemblyName>COM3D2.PropMyItem.Plugin</AssemblyName>
-    <RootNamespace>COM3D2.PropMyItem.Plugin</RootNamespace>
-    <Product>COM3D2.PropMyItem.Plugin</Product>
+
     <Company>InoryS</Company>
+    <Configurations>COM3D2-Debug;COM3D2-Release;COM3D25_UNITY_2022-Debug;COM3D25_UNITY_2022-Release</Configurations>
+    <Deterministic>true</Deterministic>
+    <ErrorReport>prompt</ErrorReport>
 
     <!-- 版本号唯一来源是 PluginInfo.cs 的 PluginVersion 常量（游戏里显示的也是它），
          csproj 里不再重复写。AssemblyVersion / FileVersion 由 SDK 从 <Version> 推导。 -->
-    <Version>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)/PluginInfo.cs')), 'PluginVersion\s*=\s*&quot;([0-9][0-9.]*)&quot;').Groups[1].Value)</Version>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 
     <!-- 兜底 TFM：未匹配到上面任何配置时先给出可读报错（见 CheckGameConfiguration），
          否则会在还原阶段抛出难懂的 NETSDK1013 -->
-    <TargetFramework Condition="'$(TargetFramework)' == ''">net35</TargetFramework>
-
     <LangVersion>latest</LangVersion>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <WarningLevel>4</WarningLevel>
-    <ErrorReport>prompt</ErrorReport>
-    <Deterministic>true</Deterministic>
-    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
 
+    <Platforms>AnyCPU</Platforms>
+    <Product>COM3D2.PropMyItem.Plugin</Product>
     <RestoreAdditionalProjectSources>
       https://api.nuget.org/v3/index.json;
       https://nuget.bepinex.dev/v3/index.json;
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
+    <RootNamespace>COM3D2.PropMyItem.Plugin</RootNamespace>
+    <TargetFramework Condition="'$(TargetFramework)' == ''">net35</TargetFramework>
+    <Version>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)/PluginInfo.cs')), 'PluginVersion\s*=\s*&quot;([0-9][0-9.]*)&quot;').Groups[1].Value)</Version>
+
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
   <!-- 忘记带 -c 时给出可读的报错，而不是一堆 CS0246 -->
-  <Target Name="CheckGameConfiguration" BeforeTargets="BeforeBuild">
+  <Target BeforeTargets="BeforeBuild" Name="CheckGameConfiguration">
     <Error
       Condition="'$(Configuration)' != 'COM3D2-Debug' And '$(Configuration)' != 'COM3D2-Release' And '$(Configuration)' != 'COM3D25_UNITY_2022-Debug' And '$(Configuration)' != 'COM3D25_UNITY_2022-Release'"
       Text="未知的构建配置 '$(Configuration)'。请使用 -c COM3D2-Debug / COM3D2-Release / COM3D25_UNITY_2022-Debug / COM3D25_UNITY_2022-Release 之一。"/>
