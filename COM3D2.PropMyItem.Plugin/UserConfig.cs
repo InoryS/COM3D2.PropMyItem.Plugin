@@ -81,6 +81,29 @@ public class UserConfig
 
     public List<string> FilterTextList { get; set; } = new();
 
+    /// <summary>
+    ///     UI 缩放倍数。整个 IMGUI 通过 GUI.matrix 一起放大，字号、间距、窗口尺寸都会跟着变。
+    /// </summary>
+    public float UiScale { get; set; } = DefaultUiScale;
+
+    public const float MinUiScale = 1f;
+
+    public const float MaxUiScale = 3f;
+
+    public const float DefaultUiScale = 1f;
+
+    public const float UiScaleStep = 0.1f;
+
+    /// <summary>把倍数取整到 0.1 并夹在 [MinUiScale, MaxUiScale] 之间。</summary>
+    public static float ClampUiScale(float value)
+    {
+        if (float.IsNaN(value) || float.IsInfinity(value)) return DefaultUiScale;
+
+        var steps = Math.Round(value / UiScaleStep);
+        var clamped = Math.Max(MinUiScale, Math.Min(MaxUiScale, steps * UiScaleStep));
+        return (float)Math.Round(clamped, 2);
+    }
+
     public static UserConfig Instance
     {
         get
@@ -112,6 +135,7 @@ public class UserConfig
                 //this.GuiVisibleKey = userConfig.GuiVisibleKey.ToLower();
                 IsAutoShoesHide = userConfig.IsAutoShoesHide;
                 IsOutputInfoLog = userConfig.IsOutputInfoLog;
+                UiScale = ClampUiScale(userConfig.UiScale);
                 FavList = userConfig.FavList;
                 ColorLockList = userConfig.ColorLockList;
                 FilterTextList = userConfig.FilterTextList;

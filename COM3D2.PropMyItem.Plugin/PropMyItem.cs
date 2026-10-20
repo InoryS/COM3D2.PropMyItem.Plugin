@@ -292,56 +292,114 @@ public class PropMyItem : BaseUnityPlugin
         }
     }
 
+    private bool _isDraggingWindow;
+    private Vector2 _dragStartMousePosition;
+    private Vector2 _dragStartWindowPosition;
+
+    /// <summary>
+    ///     代替 GUI.DragWindow()。它按 Event.delta 移动窗口，而 delta 是屏幕像素、
+    ///     窗口矩形却在缩放后的逻辑坐标里，高倍率下窗口会跑得比鼠标快。
+    ///     这里改用 Input.mousePosition（一定是屏幕坐标）除以倍数换算，任何倍率都跟手。
+    ///     只在窗口函数末尾调用：控件已经处理过 MouseDown 时会占用 hotControl，据此区分点击与拖动。
+    /// </summary>
+    private void BeginWindowDragIfNeeded()
+    {
+        if (Event.current.type != EventType.MouseDown || Event.current.button != 0) return;
+        if (GUIUtility.hotControl != 0) return;
+
+        _isDraggingWindow = true;
+        _dragStartMousePosition = Input.mousePosition;
+        _dragStartWindowPosition = _windowRect.position;
+    }
+
+    private void UpdateWindowDrag(float scale)
+    {
+        if (!_isDraggingWindow) return;
+
+        if (!Input.GetMouseButton(0))
+        {
+            _isDraggingWindow = false;
+            return;
+        }
+
+        _windowRect.position = _dragStartWindowPosition +
+                               ((Vector2)Input.mousePosition - _dragStartMousePosition) / scale;
+    }
+
     public void OnGUI()
     {
-        if (!_isVisible) return;
-
-        // Calculate the new window size
-        float newWidth = 800;
-        float newHeight = 600;
-
-        if (_isShowSetting)
+        if (!_isVisible)
         {
+            _isDraggingWindow = false;
+            return;
+        }
+
+        // 用 GUI.matrix 整体缩放：窗口、字号、间距、贴图一起放大，不用逐个改布局常量
+        var scale = UserConfig.ClampUiScale(UserConfig.Instance.UiScale);
+        var previousMatrix = GUI.matrix;
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(scale, scale, 1f)) *
+                     previousMatrix;
+        try
+        {
+            // 逻辑（未缩放）屏幕尺寸，后面所有坐标都在这个空间里
+            var screenWidth = Screen.width / scale;
+            var screenHeight = Screen.height / scale;
+
+            // 拖动要在 GUI.Window 之前生效，它用的是传进去的矩形
+            UpdateWindowDrag(scale);
+
+            // Calculate the new window size
+            float newWidth = 800;
+            float newHeight = 600;
+
+            if (_isShowSetting)
+            {
+                // Update the windowRect size
+                _windowRect.width = newWidth;
+                _windowRect.height = newHeight;
+
+                // Ensure that the window doesn't go off the screen
+                _windowRect.x = Mathf.Clamp(_windowRect.x, 0, Mathf.Max(0f, screenWidth - newWidth));
+                _windowRect.y = Mathf.Clamp(_windowRect.y, 0, Mathf.Max(0f, screenHeight - newHeight));
+
+                _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect,
+                    GuiSettingFunc, "PropMyItem " + PluginInfo.PluginVersion,
+                    GuiStyles.WindowStyle);
+                return;
+            }
+
+            if (_isShowFilterSetting)
+            {
+                // Update the windowRect size
+                _windowRect.width = newWidth;
+                _windowRect.height = newHeight;
+
+                // Ensure that the window doesn't go off the screen
+                _windowRect.x = Mathf.Clamp(_windowRect.x, 0, Mathf.Max(0f, screenWidth - newWidth));
+                _windowRect.y = Mathf.Clamp(_windowRect.y, 0, Mathf.Max(0f, screenHeight - newHeight));
+
+                _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect,
+                    GuiFilterSettingFunc, "PropMyItem " + PluginInfo.PluginVersion,
+                    GuiStyles.WindowStyle);
+                return;
+            }
+
             // Update the windowRect size
             _windowRect.width = newWidth;
             _windowRect.height = newHeight;
 
             // Ensure that the window doesn't go off the screen
-            _windowRect.x = Mathf.Clamp(_windowRect.x, 0, Screen.width - newWidth);
-            _windowRect.y = Mathf.Clamp(_windowRect.y, 0, Screen.height - newHeight);
+            _windowRect.x = Mathf.Clamp(_windowRect.x, 0, Mathf.Max(0f, screenWidth - newWidth));
+            _windowRect.y = Mathf.Clamp(_windowRect.y, 0, Mathf.Max(0f, screenHeight - newHeight));
 
-            _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect,
-                GuiSettingFunc, "PropMyItem " + PluginInfo.PluginVersion,
-                GuiStyles.WindowStyle);
-            return;
+            _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect, GuiFunc,
+                "PropMyItem " + PluginInfo.PluginVersion, GuiStyles.WindowStyle);
         }
-
-        if (_isShowFilterSetting)
+        finally
         {
-            // Update the windowRect size
-            _windowRect.width = newWidth;
-            _windowRect.height = newHeight;
-
-            // Ensure that the window doesn't go off the screen
-            _windowRect.x = Mathf.Clamp(_windowRect.x, 0, Screen.width - newWidth);
-            _windowRect.y = Mathf.Clamp(_windowRect.y, 0, Screen.height - newHeight);
-
-            _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect,
-                GuiFilterSettingFunc, "PropMyItem " + PluginInfo.PluginVersion,
-                GuiStyles.WindowStyle);
-            return;
+            // 不还原会影响游戏自己的 IMGUI 绘制
+            GUI.matrix = previousMatrix;
         }
-
-        // Update the windowRect size
-        _windowRect.width = newWidth;
-        _windowRect.height = newHeight;
-
-        // Ensure that the window doesn't go off the screen
-        _windowRect.x = Mathf.Clamp(_windowRect.x, 0, Screen.width - newWidth);
-        _windowRect.y = Mathf.Clamp(_windowRect.y, 0, Screen.height - newHeight);
-
-        _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect, GuiFunc,
-            "PropMyItem " + PluginInfo.PluginVersion, GuiStyles.WindowStyle);
     }
 
     public void OnApplicationQuit()
@@ -374,8 +432,12 @@ public class PropMyItem : BaseUnityPlugin
         }
         else
         {
-            if (_isVisible && _windowRect.Contains(new Vector2(Input.mousePosition.x,
-                    Screen.height - Input.mousePosition.y)))
+            // 鼠标是屏幕坐标，窗口矩形是（未缩放的）逻辑坐标，要先除以倍数再比
+            var scale = UserConfig.ClampUiScale(UserConfig.Instance.UiScale);
+            var mousePosition = new Vector2(Input.mousePosition.x / scale,
+                (Screen.height - Input.mousePosition.y) / scale);
+
+            if (_isVisible && _windowRect.Contains(mousePosition))
             {
                 GameMain.Instance.MainCamera.SetControl(false);
                 if (Event.current.type != EventType.KeyDown &&
@@ -401,6 +463,18 @@ public class PropMyItem : BaseUnityPlugin
         {
             Log.LogMessage("[PropMyItem] Menu files are not ready yet");
         }
+    }
+
+
+    /// <summary>调整 UI 倍数：取整到 0.1、夹在允许范围内，改动立即存盘。</summary>
+    private static void ChangeUiScale(float delta)
+    {
+        var current = UserConfig.Instance.UiScale;
+        var next = UserConfig.ClampUiScale(current + delta);
+        if (Math.Abs(next - current) < 0.001f) return;
+
+        UserConfig.Instance.UiScale = next;
+        UserConfig.Instance.Save();
     }
 
 
@@ -467,6 +541,28 @@ public class PropMyItem : BaseUnityPlugin
             UserConfig.Instance.Save();
         }
 
+        // UI 倍率：整个界面按倍数放大，方便高分辨率屏幕
+        num += GuiStyles.ControlHeight + GuiStyles.Margin + GuiStyles.Margin;
+        {
+            var labelWidth = width * 0.42f;
+            var buttonWidth = GuiStyles.ControlHeight * 1.5f;
+            GUI.Label(new Rect(margin, num, labelWidth, GuiStyles.ControlHeight), "UI 倍率",
+                GuiStyles.LabelStyle);
+
+            var valueWidth = width - labelWidth - (buttonWidth + GuiStyles.Margin) * 2f;
+            GUI.Label(new Rect(margin + labelWidth, num, valueWidth, GuiStyles.ControlHeight),
+                UserConfig.Instance.UiScale.ToString("0.0") + "x", GuiStyles.LabelStyle);
+
+            if (GUI.Button(
+                    new Rect(margin + width - buttonWidth * 2f - GuiStyles.Margin, num, buttonWidth,
+                        GuiStyles.ControlHeight), "-", GuiStyles.ButtonStyle))
+                ChangeUiScale(-UserConfig.UiScaleStep);
+
+            if (GUI.Button(new Rect(margin + width - buttonWidth, num, buttonWidth, GuiStyles.ControlHeight),
+                    "+", GuiStyles.ButtonStyle))
+                ChangeUiScale(UserConfig.UiScaleStep);
+        }
+
         num += GuiStyles.ControlHeight + GuiStyles.Margin + GuiStyles.Margin;
         if (GUI.Button(new Rect(margin, num, width, GuiStyles.ControlHeight), "Menu/Mod 再読み込み",
                 GuiStyles.ButtonStyle))
@@ -493,7 +589,7 @@ public class PropMyItem : BaseUnityPlugin
         //this._isPluginKeyChange = false;
         num += GuiStyles.ControlHeight + GuiStyles.Margin;
         _windowRect.height = num;
-        GUI.DragWindow();
+        BeginWindowDragIfNeeded();
     }
 
     private void GuiFilterSettingFunc(int windowID)
@@ -563,7 +659,7 @@ public class PropMyItem : BaseUnityPlugin
         }
 
         num3 += GuiStyles.ControlHeight + GuiStyles.Margin;
-        GUI.DragWindow();
+        BeginWindowDragIfNeeded();
     }
 
     private void GuiFunc(int windowID)
@@ -622,7 +718,7 @@ public class PropMyItem : BaseUnityPlugin
         }
         finally
         {
-            GUI.DragWindow();
+            BeginWindowDragIfNeeded();
         }
     }
 
