@@ -79,8 +79,8 @@ public class CommonUtil
     {
         var result = string.Empty;
         if (mpn != null)
-            if (mpn != MPN.set_maidwear && mpn != MPN.set_mywear && mpn != MPN.set_underwear &&
-                mpn != MPN.set_body)
+            if (mpn != Mpn.set_maidwear && mpn != Mpn.set_mywear && mpn != Mpn.set_underwear &&
+                mpn != Mpn.set_body)
                 result = maid.GetProp(mpn.Value).strFileName;
 
         return result;

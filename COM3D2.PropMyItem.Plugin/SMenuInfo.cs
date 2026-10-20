@@ -2,7 +2,7 @@
 
 public class SMenuInfo
 {
-    public MPN ColorSetMPN = MPN.head;
+    public MPN ColorSetMPN = Mpn.head;
     public string ColorSetMenuName = string.Empty;
 
     public string FileName = string.Empty;
@@ -11,7 +11,7 @@ public class SMenuInfo
 
     public string ItemName = string.Empty;
 
-    public MPN MPN = MPN.head;
+    public MPN MPN = Mpn.head;
 
     public float Priority;
 

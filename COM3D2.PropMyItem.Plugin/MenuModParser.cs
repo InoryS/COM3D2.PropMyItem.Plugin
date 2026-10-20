@@ -56,14 +56,14 @@ public class MenuModParser
             binaryReader.ReadString();
             menuInfo.ItemName = binaryReader.ReadString();
             var value = binaryReader.ReadString();
-            var mpn = MPN.null_mpn;
+            var mpn = Mpn.null_mpn;
             if (!EnumUtil.TryParse(value, true, out mpn)) return null;
 
             menuInfo.MPN = mpn;
             binaryReader.ReadString();
             if (!EnumUtil.TryParse(binaryReader.ReadString(), true, out mpn)) return null;
 
-            if (mpn != MPN.null_mpn) binaryReader.ReadString();
+            if (mpn != Mpn.null_mpn) binaryReader.ReadString();
 
             var text = binaryReader.ReadString();
             if (text.Contains("色セット"))
@@ -102,73 +102,51 @@ public class MenuModParser
     public static MenuInfo ParseMenu(string filePath)
     {
         var menuInfo = new MenuInfo();
-        MenuInfo result;
+
         using (var memoryStream =
                new MemoryStream(LoadMenuInternal(Path.GetFileName(filePath)), false))
+        using (var binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
         {
-            using (var binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
+            if (binaryReader.ReadString() != "CM3D2_MENU") return null;
+
+            // 头部：版本、资源路径、名称、分类、说明、长度
+            binaryReader.ReadInt32();
+            binaryReader.ReadString();
+            menuInfo.ItemName = binaryReader.ReadString();
+            binaryReader.ReadString();
+            binaryReader.ReadString();
+            binaryReader.ReadInt32();
+
+            while (true)
             {
-                if (binaryReader.ReadString() != "CM3D2_MENU")
+                var count = binaryReader.ReadByte();
+                if (count == 0) return menuInfo; // 0 表示命令列表结束
+
+                var command = binaryReader.ReadString();
+                var args = new string[count - 1];
+                for (var i = 0; i < args.Length; i++) args[i] = binaryReader.ReadString();
+
+                if (args.Length == 0) continue;
+
+                if (command == "category")
                 {
-                    result = null;
+                    if (!EnumUtil.TryParse(args[0], true, out menuInfo.MPN)) return null;
                 }
-                else
+                else if (command == "priority")
                 {
-                    binaryReader.ReadInt32();
-                    binaryReader.ReadString();
-                    menuInfo.ItemName = binaryReader.ReadString();
-                    binaryReader.ReadString();
-                    binaryReader.ReadString().Replace("《改行》", "\n");
-                    binaryReader.ReadInt32();
-                    for (;;)
-                    {
-                        int num = binaryReader.ReadByte();
-                        if (num == 0) goto IL_15F;
+                    menuInfo.Priority = float.Parse(args[0]);
+                }
+                else if (command == "icon" || command == "icons")
+                {
+                    menuInfo.IconName = args[0];
+                }
+                else if (command == "color_set")
+                {
+                    if (!EnumUtil.TryParse(args[0], true, out menuInfo.ColorSetMPN)) return null;
 
-                        var a = binaryReader.ReadString();
-                        var array = new string[num - 1];
-                        for (var i = 0; i < num - 1; i++) array[i] = binaryReader.ReadString();
-
-                        if (!(a == "category"))
-                        {
-                            if (!(a == "priority"))
-                            {
-                                if (!(a == "icon") && !(a == "icons"))
-                                {
-                                    if (a == "color_set")
-                                    {
-                                        if (!EnumUtil.TryParse(array[0], true,
-                                                out menuInfo.ColorSetMPN))
-                                            goto IL_167;
-
-                                        menuInfo.ColorSetMenuName = array[1];
-                                    }
-                                }
-                                else
-                                {
-                                    menuInfo.IconName = array[0];
-                                }
-                            }
-                            else
-                            {
-                                menuInfo.Priority = float.Parse(array[0]);
-                            }
-                        }
-                        else if (!EnumUtil.TryParse(array[0], true, out menuInfo.MPN))
-                        {
-                            break;
-                        }
-                    }
-
-                    return null;
-                    IL_15F:
-                    return menuInfo;
-                    IL_167:
-                    result = null;
+                    if (args.Length > 1) menuInfo.ColorSetMenuName = args[1];
                 }
             }
         }
-
-        return result;
     }
 }

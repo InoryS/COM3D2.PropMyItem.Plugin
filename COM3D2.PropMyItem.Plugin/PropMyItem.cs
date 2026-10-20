@@ -131,7 +131,10 @@ public class PropMyItem : BaseUnityPlugin
             "指甲",
             "moza"
         }));
-        _folders.Add(new FolderMenu("服装", new[]
+        // COM3D2.5 把服装拆成了叠穿的多层（インナー / アウター / ベスト …），这些 MPN 在 2.x 的
+        // 枚举里不存在，连编译用的 GameLibs 3.46.1 里都还没有 outerwear —— 所以按名字解析，
+        // 当前游戏版本没有的就整体跳过。
+        var wearCategories = new List<string>
         {
             "帽子",
             "ヘッドドレス",
@@ -143,8 +146,8 @@ public class PropMyItem : BaseUnityPlugin
             "パンツ",
             "靴下",
             "靴"
-        }));
-        _folders.Add(new FolderMenu("アクセサリ", new[]
+        };
+        var accessoryCategories = new List<string>
         {
             " 前髪 ",
             "メガネ",
@@ -155,7 +158,7 @@ public class PropMyItem : BaseUnityPlugin
             "ネックレス",
             "チョーカー",
             "リボン",
-            "\u3000乳首\u3000",
+            "乳首",
             "腕",
             "へそ",
             "足首",
@@ -164,84 +167,92 @@ public class PropMyItem : BaseUnityPlugin
             "accvag",
             "しっぽ",
             "前穴"
-        }));
+        };
+        var extraCategories = new Dictionary<string, MPN>();
+        AppendResolvableCategories(ExtraWearCategories, wearCategories, extraCategories);
+        AppendResolvableCategories(ExtraAccessoryCategories, accessoryCategories, extraCategories);
+        _folders.Add(new FolderMenu("服装", wearCategories.ToArray()));
+        _folders.Add(new FolderMenu("アクセサリ", accessoryCategories.ToArray()));
         _folders.Add(new FolderMenu("セット", new[]
         {
             "メイド服",
             "コスチューム",
             "下着",
-            "\u3000身体\u3000"
+            "身体"
         }));
         _folders.Add(new FolderMenu("プリセット", new[]
         {
             "服 / 身体",
             "服",
             "身体",
-            "\u3000全て\u3000"
+            "全て"
         }));
         _folders.Add(new FolderMenu("全て", new string[0]));
         _folders.Add(new FolderMenu("選択中", new string[0]));
-        _categoryMPNDic.Add("顔", MPN.head);
-        _categoryMPNDic.Add("眉", MPN.folder_mayu);
-        _categoryMPNDic.Add("目", MPN.folder_eye);
-        _categoryMPNDic.Add("目ハイライト", MPN.eye_hi);
-        _categoryMPNDic.Add("ほくろ", MPN.hokuro);
-        _categoryMPNDic.Add("唇", MPN.lip);
-        _categoryMPNDic.Add("歯", MPN.accha);
+        _categoryMPNDic.Add("顔", Mpn.head);
+        _categoryMPNDic.Add("眉", Mpn.folder_mayu);
+        _categoryMPNDic.Add("目", Mpn.folder_eye);
+        _categoryMPNDic.Add("目ハイライト", Mpn.eye_hi);
+        _categoryMPNDic.Add("ほくろ", Mpn.hokuro);
+        _categoryMPNDic.Add("唇", Mpn.lip);
+        _categoryMPNDic.Add("歯", Mpn.accha);
 
-        _categoryMPNDic.Add("上まつげ", MPN.folder_matsuge_up);
-        _categoryMPNDic.Add("下まつげ", MPN.folder_matsuge_low);
-        _categoryMPNDic.Add("二重まぶた", MPN.folder_futae);
+        _categoryMPNDic.Add("上まつげ", Mpn.folder_matsuge_up);
+        _categoryMPNDic.Add("下まつげ", Mpn.folder_matsuge_low);
+        _categoryMPNDic.Add("二重まぶた", Mpn.folder_futae);
 
-        _categoryMPNDic.Add("前髪", MPN.hairf);
-        _categoryMPNDic.Add("後髪", MPN.hairr);
-        _categoryMPNDic.Add("横髪", MPN.hairs);
-        _categoryMPNDic.Add("エクステ髪", MPN.hairt);
-        _categoryMPNDic.Add("アホ毛", MPN.hairaho);
-        _categoryMPNDic.Add("肌", MPN.folder_skin);
-        _categoryMPNDic.Add("乳首", MPN.chikubi);
-        _categoryMPNDic.Add("タトゥー", MPN.acctatoo);
-        _categoryMPNDic.Add("アンダーヘア", MPN.folder_underhair);
-        _categoryMPNDic.Add("ボディ", MPN.body);
-        _categoryMPNDic.Add("帽子", MPN.acchat);
-        _categoryMPNDic.Add("ヘッドドレス", MPN.headset);
-        _categoryMPNDic.Add("トップス", MPN.wear);
-        _categoryMPNDic.Add("ボトムス", MPN.skirt);
-        _categoryMPNDic.Add("ワンピース", MPN.onepiece);
-        _categoryMPNDic.Add("水着", MPN.mizugi);
-        _categoryMPNDic.Add("ブラジャー", MPN.bra);
-        _categoryMPNDic.Add("パンツ", MPN.panz);
-        _categoryMPNDic.Add("靴下", MPN.stkg);
-        _categoryMPNDic.Add("靴", MPN.shoes);
-        _categoryMPNDic.Add(" 前髪 ", MPN.acckami);
-        _categoryMPNDic.Add("メガネ", MPN.megane);
-        _categoryMPNDic.Add("アイマスク", MPN.acchead);
-        _categoryMPNDic.Add("鼻", MPN.acchana);
-        _categoryMPNDic.Add("耳", MPN.accmimi);
-        _categoryMPNDic.Add("手袋", MPN.glove);
-        _categoryMPNDic.Add("ネックレス", MPN.acckubi);
-        _categoryMPNDic.Add("チョーカー", MPN.acckubiwa);
-        _categoryMPNDic.Add("リボン", MPN.acckamisub);
-        _categoryMPNDic.Add("\u3000乳首\u3000", MPN.accnip);
-        _categoryMPNDic.Add("腕", MPN.accude);
-        _categoryMPNDic.Add("へそ", MPN.accheso);
-        _categoryMPNDic.Add("足首", MPN.accashi);
-        _categoryMPNDic.Add("背中", MPN.accsenaka);
-        _categoryMPNDic.Add("しっぽ", MPN.accshippo);
-        _categoryMPNDic.Add("前穴", MPN.accxxx);
-        _categoryMPNDic.Add("メイド服", MPN.set_maidwear);
-        _categoryMPNDic.Add("コスチューム", MPN.set_mywear);
-        _categoryMPNDic.Add("下着", MPN.set_underwear);
-        _categoryMPNDic.Add("\u3000身体\u3000", MPN.set_body);
+        _categoryMPNDic.Add("前髪", Mpn.hairf);
+        _categoryMPNDic.Add("後髪", Mpn.hairr);
+        _categoryMPNDic.Add("横髪", Mpn.hairs);
+        _categoryMPNDic.Add("エクステ髪", Mpn.hairt);
+        _categoryMPNDic.Add("アホ毛", Mpn.hairaho);
+        _categoryMPNDic.Add("肌", Mpn.folder_skin);
+        _categoryMPNDic.Add("乳首", Mpn.chikubi);
+        _categoryMPNDic.Add("タトゥー", Mpn.acctatoo);
+        _categoryMPNDic.Add("アンダーヘア", Mpn.folder_underhair);
+        _categoryMPNDic.Add("ボディ", Mpn.body);
+        _categoryMPNDic.Add("帽子", Mpn.acchat);
+        _categoryMPNDic.Add("ヘッドドレス", Mpn.headset);
+        _categoryMPNDic.Add("トップス", Mpn.wear);
+        _categoryMPNDic.Add("ボトムス", Mpn.skirt);
+        _categoryMPNDic.Add("ワンピース", Mpn.onepiece);
+        _categoryMPNDic.Add("水着", Mpn.mizugi);
+        _categoryMPNDic.Add("ブラジャー", Mpn.bra);
+        _categoryMPNDic.Add("パンツ", Mpn.panz);
+        _categoryMPNDic.Add("靴下", Mpn.stkg);
+        _categoryMPNDic.Add("靴", Mpn.shoes);
+        _categoryMPNDic.Add(" 前髪 ", Mpn.acckami);
+        _categoryMPNDic.Add("メガネ", Mpn.megane);
+        _categoryMPNDic.Add("アイマスク", Mpn.acchead);
+        _categoryMPNDic.Add("鼻", Mpn.acchana);
+        _categoryMPNDic.Add("耳", Mpn.accmimi);
+        _categoryMPNDic.Add("手袋", Mpn.glove);
+        _categoryMPNDic.Add("ネックレス", Mpn.acckubi);
+        _categoryMPNDic.Add("チョーカー", Mpn.acckubiwa);
+        _categoryMPNDic.Add("リボン", Mpn.acckamisub);
+        _categoryMPNDic.Add("乳首", Mpn.accnip);
+        _categoryMPNDic.Add("腕", Mpn.accude);
+        _categoryMPNDic.Add("へそ", Mpn.accheso);
+        _categoryMPNDic.Add("足首", Mpn.accashi);
+        _categoryMPNDic.Add("背中", Mpn.accsenaka);
+        _categoryMPNDic.Add("しっぽ", Mpn.accshippo);
+        _categoryMPNDic.Add("前穴", Mpn.accxxx);
+        _categoryMPNDic.Add("メイド服", Mpn.set_maidwear);
+        _categoryMPNDic.Add("コスチューム", Mpn.set_mywear);
+        _categoryMPNDic.Add("下着", Mpn.set_underwear);
+        _categoryMPNDic.Add("身体", Mpn.set_body);
 
-        _categoryMPNDic.Add("鞏膜", MPN.folder_eyewhite);
+        _categoryMPNDic.Add("鞏膜", Mpn.folder_eyewhite);
 
-        _categoryMPNDic.Add("accanl", MPN.accanl);
-        _categoryMPNDic.Add("指甲", MPN.accnail);
-        _categoryMPNDic.Add("accvag", MPN.accvag);
-        _categoryMPNDic.Add("moza", MPN.moza);
+        _categoryMPNDic.Add("accanl", Mpn.accanl);
+        _categoryMPNDic.Add("指甲", Mpn.accnail);
+        _categoryMPNDic.Add("accvag", Mpn.accvag);
+        _categoryMPNDic.Add("moza", Mpn.moza);
 
-        _categoryMPNDic.Add("chikubicolor", MPN.chikubicolor);
+        _categoryMPNDic.Add("chikubicolor", Mpn.chikubicolor);
+
+        // 上面按名字解析出来的 2.5 新槽位
+        foreach (var pair in extraCategories) _categoryMPNDic.Add(pair.Key, pair.Value);
 
         foreach (var text in _categoryMPNDic.Keys)
             _menuMPNCategoryDic.Add(_categoryMPNDic[text], text);
@@ -254,6 +265,44 @@ public class PropMyItem : BaseUnityPlugin
     }
 
     private ConfigEntry<KeyboardShortcut> ShowCounter { get; set; }
+
+    /// <summary>
+    ///     COM3D2.5 新增的叠穿服装槽位。2.x 的枚举里没有这些名字（连编译用的 GameLibs 3.46.1 都还没有
+    ///     outerwear），所以不能直接写 Mpn.xxx，只能按名字在运行时解析；解析不到就跳过。
+    /// </summary>
+    private static readonly Dictionary<string, string> ExtraWearCategories = new()
+    {
+        { "インナー", "shirt" },
+        { "アウター", "outerwear" },
+        { "ベスト", "vest" },
+        { "ジャケット", "jacket" },
+        { "スリップ", "slip" },
+        { "水着上", "mizugi_top" },
+        { "水着下", "mizugi_buttom" }
+    };
+
+    private static readonly Dictionary<string, string> ExtraAccessoryCategories = new()
+    {
+        { "顔アクセ", "accface" },
+        { "腰", "acckoshi" },
+        { "手持ち", "handitem" }
+    };
+
+    /// <summary>把「分类名 → MPN 名」中当前游戏版本能解析出来的项追加到分类列表。</summary>
+    private static void AppendResolvableCategories(Dictionary<string, string> source, List<string> target,
+        Dictionary<string, MPN> resolved)
+    {
+        foreach (var pair in source)
+        {
+            MPN mpn;
+            if (!EnumUtil.TryParse(pair.Value, true, out mpn)) continue;
+            if (mpn == Mpn.null_mpn) continue;
+            if (resolved.ContainsKey(pair.Key)) continue;
+
+            resolved.Add(pair.Key, mpn);
+            target.Add(pair.Key);
+        }
+    }
 
     public void Awake()
     {
@@ -292,8 +341,14 @@ public class PropMyItem : BaseUnityPlugin
         }
     }
 
-    private bool _isDraggingWindow;
-    private Vector2 _dragStartMousePosition;
+    // MenuDataBase 条目的统计，排查「某个类别全空」时看日志就知道卡在哪一步
+    private static int _dbAccepted;
+    private static int _dbSkippedNoMpn;
+    private static int _dbSkippedNoIcon;
+    private static string _dbSkippedSamples = string.Empty;
+    private static string _dbNoMpnSamples = string.Empty;
+
+    private bool _isDraggingWindow;    private Vector2 _dragStartMousePosition;
     private Vector2 _dragStartWindowPosition;
 
     // 本帧 MouseDown 时的鼠标位置（逻辑屏幕坐标），点中空白处才拿它当拖动起点
@@ -316,6 +371,10 @@ public class PropMyItem : BaseUnityPlugin
             _isDraggingWindow = false;
 
         if (!_isDraggingWindow) return;
+
+        // 只在拖动事件里更新位置：Layout / Repaint 时 Event.current.mousePosition 不可靠，
+        // 拿它算位移会让窗口乱跳（表现就是「拖动太敏感」）
+        if (current.type != EventType.MouseDrag) return;
 
         _windowRect.position = _dragStartWindowPosition +
                                (current.mousePosition - _dragStartMousePosition);
@@ -707,7 +766,7 @@ public class PropMyItem : BaseUnityPlugin
                 }
                 else
                 {
-                    if (_selectedMPN != MPN.null_mpn || _folders[_selectedFolder].Name == "全て" ||
+                    if (_selectedMPN != Mpn.null_mpn || _folders[_selectedFolder].Name == "全て" ||
                         _folders[_selectedFolder].Name == "選択中")
                     {
                         guiSelectedItemFilter(margin, yPos);
@@ -811,7 +870,7 @@ public class PropMyItem : BaseUnityPlugin
             if (GUI.Button(position, _folders[i].Name, GuiStyles.ButtonStyle))
             {
                 _selectedFolder = i;
-                _selectedMPN = MPN.null_mpn;
+                _selectedMPN = Mpn.null_mpn;
                 _selectedCategory = -1;
                 _selectedItem = null;
                 _selectedVariationItem = null;
@@ -894,7 +953,7 @@ public class PropMyItem : BaseUnityPlugin
                     _selectedItem = null;
                     _selectedVariationItem = null;
                     _scrollPosition.y = 0f;
-                    var selectedMPN = MPN.head;
+                    var selectedMPN = Mpn.head;
                     if (_categoryMPNDic.TryGetValue(_folders[_selectedFolder].Categories[i],
                             out selectedMPN))
                     {
@@ -904,7 +963,7 @@ public class PropMyItem : BaseUnityPlugin
                     {
                         if (_folders[_selectedFolder].Name == "プリセット")
                         {
-                            if (_folders[_selectedFolder].Categories[i] == "\u3000全て\u3000")
+                            if (_folders[_selectedFolder].Categories[i] == "全て")
                             {
                                 _selectedPresetList =
                                     GameMain.Instance.CharacterMgr.PresetListLoad();
@@ -924,7 +983,7 @@ public class PropMyItem : BaseUnityPlugin
                             }
                         }
 
-                        _selectedMPN = MPN.null_mpn;
+                        _selectedMPN = Mpn.null_mpn;
                     }
 
                     _selectedCategory = i;
@@ -993,12 +1052,12 @@ public class PropMyItem : BaseUnityPlugin
                             /*
                             MPN[] array = new MPN[]
                             {
-                                MPN.megane,
-                                MPN.acckami,
-                                MPN.acckamisub,
-                                MPN.hairt,
-                                MPN.headset,
-                                MPN.acchat
+                                Mpn.megane,
+                                Mpn.acckami,
+                                Mpn.acckamisub,
+                                Mpn.hairt,
+                                Mpn.headset,
+                                Mpn.acchat
                             };
                             this.presetRestoreDic_.Clear();
                             foreach (MPN mpn in array)
@@ -1026,12 +1085,12 @@ public class PropMyItem : BaseUnityPlugin
                         /*
                         MPN[] array3 = new MPN[]
                         {
-                            MPN.megane,
-                            MPN.acckami,
-                            MPN.acckamisub,
-                            MPN.hairt,
-                            MPN.headset,
-                            MPN.acchat
+                            Mpn.megane,
+                            Mpn.acckami,
+                            Mpn.acckamisub,
+                            Mpn.hairt,
+                            Mpn.headset,
+                            Mpn.acchat
                         };
                         this.presetRestoreDic_.Clear();
                         foreach (MPN mpn2 in array3)
@@ -1127,9 +1186,9 @@ public class PropMyItem : BaseUnityPlugin
                 while (enumerator2.MoveNext())
                 {
                     var mpn = enumerator2.Current;
-                    if (mpn != MPN.set_maidwear && mpn != MPN.set_mywear &&
-                        mpn != MPN.set_underwear &&
-                        mpn != MPN.set_body)
+                    if (mpn != Mpn.set_maidwear && mpn != Mpn.set_mywear &&
+                        mpn != Mpn.set_underwear &&
+                        mpn != Mpn.set_body)
                     {
                         List<MenuInfo> list2 = null;
                         if (_mpnMenuListDictionary.TryGetValue(mpn, out list2))
@@ -1178,8 +1237,8 @@ public class PropMyItem : BaseUnityPlugin
         var num7 = num6;
         var num8 = itemList.Count;
         var num9 = 0;
-        if (_selectedMPN == MPN.set_maidwear || _selectedMPN == MPN.set_mywear ||
-            _selectedMPN == MPN.set_underwear || _selectedMPN == MPN.set_body)
+        if (_selectedMPN == Mpn.set_maidwear || _selectedMPN == Mpn.set_mywear ||
+            _selectedMPN == Mpn.set_underwear || _selectedMPN == Mpn.set_body)
         {
             num6 = 75f;
             num7 = num6 * 1.44f;
@@ -1218,14 +1277,14 @@ public class PropMyItem : BaseUnityPlugin
                     {
                         num9++;
                         menuInfo.IsHave = false;
-                        goto IL_1DC;
+                        continue;
                     }
                 }
                 else if (_selectedFilter == 2 && !menuInfo.IsMod)
                 {
                     num9++;
                     menuInfo.IsHave = false;
-                    goto IL_1DC;
+                    continue;
                 }
 
                 if (_isFavFilter && !menuInfo.IsFavorite)
@@ -1244,7 +1303,6 @@ public class PropMyItem : BaseUnityPlugin
                 }
             }
 
-            IL_1DC: ;
         }
 
         num8 -= num9;
@@ -1339,24 +1397,26 @@ public class PropMyItem : BaseUnityPlugin
                     if (menuInfo2.Icon == null && !string.IsNullOrEmpty(menuInfo2.IconName) &&
                         !menuInfo2.IsError)
                     {
+                        var loaded = false;
                         if (!menuInfo2.IsOfficialMOD)
                             try
                             {
                                 menuInfo2.Icon = ImportCM.CreateTexture(menuInfo2.IconName);
-                                goto IL_632;
+                                loaded = true;
                             }
                             catch (Exception e)
                             {
-                                //menuInfo2.IsError = true;
-                                //goto IL_D64;
                                 Log.LogMessage(e.ToString());
                             }
 
-                        var menuInfo4 = MenuModParser.parseMod(menuInfo2.FilePath);
-                        menuInfo2.Icon = menuInfo4.Icon;
+                        // 从 .tex 加载失败时退回从 .mod 文件里取内嵌图标
+                        if (!loaded)
+                        {
+                            var modInfo = MenuModParser.parseMod(menuInfo2.FilePath);
+                            if (modInfo != null) menuInfo2.Icon = modInfo.Icon;
+                        }
                     }
 
-                    IL_632:
                     var tooltip = menuInfo2.ItemName;
                     if (_folders[_selectedFolder].Name == "全て" ||
                         _folders[_selectedFolder].Name == "選択中")
@@ -1540,14 +1600,14 @@ public class PropMyItem : BaseUnityPlugin
                                         Path.GetFileName(menuInfo2.FileName).GetHashCode());
 
 
-                                if ((menuInfo2.MPN == MPN.folder_futae ||
-                                     menuInfo2.MPN == MPN.folder_matsuge_low ||
-                                     menuInfo2.MPN == MPN.folder_matsuge_up ||
-                                     menuInfo2.MPN == MPN.folder_eye ||
-                                     menuInfo2.MPN == MPN.folder_mayu ||
-                                     menuInfo2.MPN == MPN.folder_skin ||
-                                     menuInfo2.MPN == MPN.folder_underhair ||
-                                     menuInfo2.MPN == MPN.chikubi) &&
+                                if ((menuInfo2.MPN == Mpn.folder_futae ||
+                                     menuInfo2.MPN == Mpn.folder_matsuge_low ||
+                                     menuInfo2.MPN == Mpn.folder_matsuge_up ||
+                                     menuInfo2.MPN == Mpn.folder_eye ||
+                                     menuInfo2.MPN == Mpn.folder_mayu ||
+                                     menuInfo2.MPN == Mpn.folder_skin ||
+                                     menuInfo2.MPN == Mpn.folder_underhair ||
+                                     menuInfo2.MPN == Mpn.chikubi) &&
                                     menuInfo2.ColorSetMenuList.Count > 0)
                                 {
                                     var menuInfo6 = _selectedVariationItem.ColorSetMenuList[0];
@@ -1579,8 +1639,8 @@ public class PropMyItem : BaseUnityPlugin
                         var position6 = new Rect(position2.x + position2.width - num,
                             position2.y + num3, 10f,
                             10f);
-                        if (menuInfo2.MPN == MPN.set_maidwear || menuInfo2.MPN == MPN.set_mywear ||
-                            menuInfo2.MPN == MPN.set_underwear || menuInfo2.MPN == MPN.set_body)
+                        if (menuInfo2.MPN == Mpn.set_maidwear || menuInfo2.MPN == Mpn.set_mywear ||
+                            menuInfo2.MPN == Mpn.set_underwear || menuInfo2.MPN == Mpn.set_body)
                             position6 = new Rect(position2.x + position2.width - num2,
                                 position2.y + num3, 10f,
                                 10f);
@@ -1602,32 +1662,32 @@ public class PropMyItem : BaseUnityPlugin
             var position8 = new Rect(num6 * 3f, num16, num6 * 2f, num7);
             MPN[] array =
             {
-                MPN.acchat,
-                MPN.headset,
-                MPN.wear,
-                MPN.skirt,
-                MPN.onepiece,
-                MPN.mizugi,
-                MPN.bra,
-                MPN.panz,
-                MPN.stkg,
-                MPN.shoes,
-                MPN.acckami,
-                MPN.megane,
-                MPN.acchead,
-                MPN.acchana,
-                MPN.accmimi,
-                MPN.glove,
-                MPN.acckubi,
-                MPN.acckubiwa,
-                MPN.acckamisub,
-                MPN.accnip,
-                MPN.accude,
-                MPN.accheso,
-                MPN.accashi,
-                MPN.accsenaka,
-                MPN.accshippo,
-                MPN.accxxx
+                Mpn.acchat,
+                Mpn.headset,
+                Mpn.wear,
+                Mpn.skirt,
+                Mpn.onepiece,
+                Mpn.mizugi,
+                Mpn.bra,
+                Mpn.panz,
+                Mpn.stkg,
+                Mpn.shoes,
+                Mpn.acckami,
+                Mpn.megane,
+                Mpn.acchead,
+                Mpn.acchana,
+                Mpn.accmimi,
+                Mpn.glove,
+                Mpn.acckubi,
+                Mpn.acckubiwa,
+                Mpn.acckamisub,
+                Mpn.accnip,
+                Mpn.accude,
+                Mpn.accheso,
+                Mpn.accashi,
+                Mpn.accsenaka,
+                Mpn.accshippo,
+                Mpn.accxxx
             };
             if (GUI.Button(position7, "カラバリ変更(前)", GuiStyles.ButtonStyle) && maid != null)
                 foreach (var mpn in array)
@@ -1680,10 +1740,10 @@ public class PropMyItem : BaseUnityPlugin
     {
         visibleMaidList2.SetProp(menuInfo2.MPN, menuInfo2.FileName,
             Path.GetFileName(menuInfo2.FileName).GetHashCode());
-        if ((menuInfo2.MPN == MPN.folder_futae || menuInfo2.MPN == MPN.folder_matsuge_low ||
-             menuInfo2.MPN == MPN.folder_matsuge_up || menuInfo2.MPN == MPN.folder_eye ||
-             menuInfo2.MPN == MPN.folder_mayu || menuInfo2.MPN == MPN.folder_skin ||
-             menuInfo2.MPN == MPN.folder_underhair || menuInfo2.MPN == MPN.chikubi) &&
+        if ((menuInfo2.MPN == Mpn.folder_futae || menuInfo2.MPN == Mpn.folder_matsuge_low ||
+             menuInfo2.MPN == Mpn.folder_matsuge_up || menuInfo2.MPN == Mpn.folder_eye ||
+             menuInfo2.MPN == Mpn.folder_mayu || menuInfo2.MPN == Mpn.folder_skin ||
+             menuInfo2.MPN == Mpn.folder_underhair || menuInfo2.MPN == Mpn.chikubi) &&
             menuInfo2.ColorSetMenuList.Count > 0)
         {
             var menuInfo5 = _selectedVariationItem.ColorSetMenuList[0];
@@ -1706,33 +1766,32 @@ public class PropMyItem : BaseUnityPlugin
         _colorItemScrollPosition =
             GUI.BeginScrollView(position, _colorItemScrollPosition, viewRect);
         new Rect(0f, 0f, iconWidth, iconWidth);
-        var i = 0;
-        while (i < count)
+        for (var i = 0; i < count; i++)
         {
             var menuInfo = itemMenuInfo.VariationMenuList[i];
             if (menuInfo.Icon == null && !string.IsNullOrEmpty(menuInfo.IconName) &&
                 !menuInfo.IsError)
             {
+                var loaded = false;
                 if (!menuInfo.IsOfficialMOD)
                     try
                     {
                         menuInfo.Icon = ImportCM.CreateTexture(menuInfo.IconName);
-                        goto IL_10A;
+                        loaded = true;
                     }
                     catch (Exception e)
                     {
                         Log.LogMessage("" + e);
                     }
 
-                var menuInfo2 = MenuModParser.parseMod(menuInfo.FilePath);
-                menuInfo.Icon = menuInfo2.Icon;
+                // 从 .tex 加载失败时退回从 .mod 文件里取内嵌图标
+                if (!loaded)
+                {
+                    var modInfo = MenuModParser.parseMod(menuInfo.FilePath);
+                    if (modInfo != null) menuInfo.Icon = modInfo.Icon;
+                }
             }
 
-            goto IL_10A;
-            IL_101:
-            i++;
-            continue;
-            IL_10A:
             var tooltip = menuInfo.ItemName;
             if (_folders[_selectedFolder].Name == "全て" ||
                 _folders[_selectedFolder].Name == "選択中")
@@ -1779,7 +1838,6 @@ public class PropMyItem : BaseUnityPlugin
 
 
             GUI.enabled = true;
-            goto IL_101;
         }
 
         GUI.EndScrollView();
@@ -1800,33 +1858,32 @@ public class PropMyItem : BaseUnityPlugin
 
             float num = 420 / _selectedVariationItem.ColorSetMenuList.Count;
             num = num > 28f ? 28f : num;
-            var i = 0;
-            while (i < _selectedVariationItem.ColorSetMenuList.Count)
+            for (var i = 0; i < _selectedVariationItem.ColorSetMenuList.Count; i++)
             {
                 var menuInfo = _selectedVariationItem.ColorSetMenuList[i];
                 if (menuInfo.Icon == null && !string.IsNullOrEmpty(menuInfo.IconName) &&
                     !menuInfo.IsError)
                 {
+                    var loaded = false;
                     if (!menuInfo.IsOfficialMOD)
                         try
                         {
                             menuInfo.Icon = ImportCM.CreateTexture(menuInfo.IconName);
-                            goto IL_125;
+                            loaded = true;
                         }
                         catch (Exception e)
                         {
                             Log.LogMessage("" + e);
                         }
 
-                    var menuInfo2 = MenuModParser.parseMod(menuInfo.FilePath);
-                    menuInfo.Icon = menuInfo2.Icon;
+                    // 从 .tex 加载失败时退回从 .mod 文件里取内嵌图标
+                    if (!loaded)
+                    {
+                        var modInfo = MenuModParser.parseMod(menuInfo.FilePath);
+                        if (modInfo != null) menuInfo.Icon = modInfo.Icon;
+                    }
                 }
 
-                goto IL_125;
-                IL_11C:
-                i++;
-                continue;
-                IL_125:
                 if (!string.IsNullOrEmpty(value) &&
                     menuInfo.FileName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == 0)
                 {
@@ -1865,7 +1922,6 @@ public class PropMyItem : BaseUnityPlugin
 
 
                 GUI.enabled = true;
-                goto IL_11C;
             }
 
             posX += num + 8f;
@@ -1888,108 +1944,45 @@ public class PropMyItem : BaseUnityPlugin
             {
                 var num = posY;
                 var maid = visibleMaidList[_selectedMaid];
-                var parts_COLOR = MaidParts.PARTS_COLOR.SKIN;
                 var mpn = _selectedItem.MPN;
-                switch (mpn)
+                var parts_COLOR = GetColorTarget(mpn);
+
+                // 眼睛多一个「両目 / 左目 / 右目」的切换按钮
+                if (mpn == Mpn.eye || mpn == Mpn.folder_eye)
                 {
-                    case MPN.folder_matsuge_up:
-                        parts_COLOR = MaidParts.PARTS_COLOR.MATSUGE_UP;
-                        goto IL_189;
+                    var text = string.Empty;
+                    if (_selectedEyeClorType == 0)
+                    {
+                        parts_COLOR = MaidParts.PARTS_COLOR.EYE_L;
+                        text = "両目";
+                    }
+                    else if (_selectedEyeClorType == 1)
+                    {
+                        parts_COLOR = MaidParts.PARTS_COLOR.EYE_L;
+                        text = "左目";
+                    }
+                    else if (_selectedEyeClorType == 2)
+                    {
+                        parts_COLOR = MaidParts.PARTS_COLOR.EYE_R;
+                        text = "右目";
+                    }
 
-                    case MPN.folder_matsuge_low:
-                        parts_COLOR = MaidParts.PARTS_COLOR.MATSUGE_LOW;
-                        goto IL_189;
+                    if (GUI.Button(new Rect(posX, posY, fontSize * 8, controlHeight), text,
+                            buttonStyle))
+                        _selectedEyeClorType =
+                            _selectedEyeClorType == 2 ? 0 : _selectedEyeClorType + 1;
 
-                    case MPN.folder_futae:
-                        parts_COLOR = MaidParts.PARTS_COLOR.FUTAE;
-                        goto IL_189;
-
-                    case MPN.hairf:
-                    case MPN.hairr:
-                    case MPN.hairt:
-                    case MPN.hairs:
-                    case MPN.hairaho:
-                    case MPN.haircolor:
-                        parts_COLOR = MaidParts.PARTS_COLOR.HAIR;
-                        goto IL_189;
-                    case MPN.skin:
-                        break;
-                    case MPN.acctatoo:
-                    case MPN.accnail:
-                    case MPN.hokuro:
-                    case MPN.lip:
-                    case MPN.eye_hi:
-                    case MPN.eye_hi_r:
-                        goto IL_189;
-                    case MPN.underhair:
-                        goto IL_F8;
-                    case MPN.mayu:
-                        goto IL_100;
-                    case MPN.eye:
-                        goto IL_108;
-                    case MPN.chikubi:
-                    case MPN.chikubicolor:
-                        parts_COLOR = MaidParts.PARTS_COLOR.NIPPLE;
-                        goto IL_189;
-                    default:
-                        switch (mpn)
-                        {
-                            case MPN.folder_eye:
-                                goto IL_108;
-                            case MPN.folder_mayu:
-                                goto IL_100;
-                            case MPN.folder_underhair:
-                                goto IL_F8;
-                            case MPN.folder_skin:
-                                break;
-                            default:
-                                goto IL_189;
-                        }
-
-                        break;
+                    num = controlHeight + 8f + posY;
                 }
 
-                parts_COLOR = MaidParts.PARTS_COLOR.SKIN;
-                goto IL_189;
-                IL_F8:
-                parts_COLOR = MaidParts.PARTS_COLOR.UNDER_HAIR;
-                goto IL_189;
-                IL_100:
-                parts_COLOR = MaidParts.PARTS_COLOR.EYE_BROW;
-                goto IL_189;
-                IL_108:
-                var text = string.Empty;
-                if (_selectedEyeClorType == 0)
-                {
-                    parts_COLOR = MaidParts.PARTS_COLOR.EYE_L;
-                    text = "両目";
-                }
-                else if (_selectedEyeClorType == 1)
-                {
-                    parts_COLOR = MaidParts.PARTS_COLOR.EYE_L;
-                    text = "左目";
-                }
-                else if (_selectedEyeClorType == 2)
-                {
-                    parts_COLOR = MaidParts.PARTS_COLOR.EYE_R;
-                    text = "右目";
-                }
-
-                if (GUI.Button(new Rect(posX, posY, fontSize * 8, controlHeight), text,
-                        buttonStyle))
-                    _selectedEyeClorType =
-                        _selectedEyeClorType == 2 ? 0 : _selectedEyeClorType + 1;
-
-                num = controlHeight + 8f + posY;
-                IL_189:
                 var partsColor = maid.Parts.GetPartsColor(parts_COLOR);
                 string[] array =
                 {
-                    "色相\u3000",
-                    "彩度\u3000",
-                    "明度\u3000",
-                    "対称\u3000",
-                    "影率\u3000",
+                    "色相",
+                    "彩度",
+                    "明度",
+                    "対称",
+                    "影率",
                     "影色 色相",
                     "影色 彩度",
                     "影色 明度",
@@ -2063,6 +2056,26 @@ public class PropMyItem : BaseUnityPlugin
         }
     }
 
+    /// <summary>把选中的部件映射成要改色的部位（眼睛由调用方按「両目/左目/右目」另行决定）。</summary>
+    private static MaidParts.PARTS_COLOR GetColorTarget(MPN mpn)
+    {
+        if (mpn == Mpn.folder_matsuge_up) return MaidParts.PARTS_COLOR.MATSUGE_UP;
+        if (mpn == Mpn.folder_matsuge_low) return MaidParts.PARTS_COLOR.MATSUGE_LOW;
+        if (mpn == Mpn.folder_futae) return MaidParts.PARTS_COLOR.FUTAE;
+
+        if (mpn == Mpn.hairf || mpn == Mpn.hairr || mpn == Mpn.hairt ||
+            mpn == Mpn.hairs || mpn == Mpn.hairaho || mpn == Mpn.haircolor)
+            return MaidParts.PARTS_COLOR.HAIR;
+
+        if (mpn == Mpn.underhair || mpn == Mpn.folder_underhair)
+            return MaidParts.PARTS_COLOR.UNDER_HAIR;
+
+        if (mpn == Mpn.mayu || mpn == Mpn.folder_mayu) return MaidParts.PARTS_COLOR.EYE_BROW;
+        if (mpn == Mpn.chikubi || mpn == Mpn.chikubicolor) return MaidParts.PARTS_COLOR.NIPPLE;
+
+        return MaidParts.PARTS_COLOR.SKIN;
+    }
+
     private void changeColor(MaidParts.PartsColor partsColor, MaidParts.PARTS_COLOR partsColorType,
         int[] values,
         Maid maid)
@@ -2101,6 +2114,19 @@ public class PropMyItem : BaseUnityPlugin
                 menuItems =
                     new List<SMenuInfo>(); //COM3D2.PropMyItem.PluginConfig.Instance.MenuItems;//new List<SMenuInfo>();
             var dictionary = new Dictionary<string, MenuInfo>();
+
+            // 每次都重建 MPN 桶：以前只在 isInit 时重建，一旦中途抛异常就会留下一个空字典，
+            // 之后所有道具都无处可放（界面全空）。用索引器赋值，枚举里万一有别名值也不会抛。
+            _mpnMenuListDictionary = new Dictionary<MPN, List<MenuInfo>>();
+            foreach (var obj in Enum.GetValues(typeof(MPN)))
+                _mpnMenuListDictionary[(MPN)obj] = new List<MenuInfo>();
+
+            _dbAccepted = 0;
+            _dbSkippedNoMpn = 0;
+            _dbSkippedNoIcon = 0;
+            _dbSkippedSamples = string.Empty;
+            _dbNoMpnSamples = string.Empty;
+
             if (!isInit)
             {
                 using (var enumerator =
@@ -2112,18 +2138,11 @@ public class PropMyItem : BaseUnityPlugin
                         if (!dictionary.ContainsKey(smenuInfo.FileName))
                             dictionary.Add(smenuInfo.FileName, new MenuInfo(smenuInfo));
                     }
-                    //	goto IL_CA;
                 }
             }
-            else
-            {
-                _mpnMenuListDictionary = new Dictionary<MPN, List<MenuInfo>>();
-                foreach (var obj in Enum.GetValues(typeof(MPN)))
-                {
-                    var key = (MPN)obj;
-                    _mpnMenuListDictionary.Add(key, new List<MenuInfo>());
-                }
-            }
+
+            Log.LogMessage("[PropMyItem] buckets = " + _mpnMenuListDictionary.Count +
+                           " isInit=" + isInit + " cache=" + dictionary.Count);
 
             //IL_CA:
             if (dictionary.Count == 0) Log.LogMessage("[PropMyItem] 準備中...");
@@ -2142,17 +2161,20 @@ public class PropMyItem : BaseUnityPlugin
             Log.LogMessage("[PropMyItem] 完了1 " + menuItems.Count);
             GetMainMenuFiles(ref list, dictionary, dictionary2, dictionary3, ref menuItems);
             Log.LogMessage("[PropMyItem] 完了2 " + menuItems.Count);
+            // 先打一次分布：mod 扫描如果卡住/中断，至少这里的数据已经出来了
+            LogMenuDistribution();
             GetModFiles(ref list, dictionary, dictionary2, dictionary3, ref menuItems); // 여기서 에러남
             Log.LogMessage("[PropMyItem] 完了3 " + menuItems.Count);
             SetVariationMenu(dictionary2, dictionary3, ref list);
             sort(false, true);
             setColorSet();
+            LogMenuDistribution();
             PluginConfig.Instance.MenuItems = menuItems;
             PluginConfig.Instance.Save();
             if (dictionary.Count == 0) Log.LogMessage("[PropMyItem] 完了");
 
             _selectedFolder = 0;
-            _selectedMPN = MPN.null_mpn;
+            _selectedMPN = Mpn.null_mpn;
             _selectedCategory = -1;
             _selectedItem = null;
             _selectedVariationItem = null;
@@ -2160,7 +2182,7 @@ public class PropMyItem : BaseUnityPlugin
             _selectedItem = null;
             _selectedVariationItem = null;
             _scrollPosition.y = 0f;
-            var selectedMPN = MPN.head;
+            var selectedMPN = Mpn.head;
             if (_categoryMPNDic.TryGetValue(_folders[_selectedFolder].Categories[0],
                     out selectedMPN))
                 _selectedMPN = selectedMPN;
@@ -2232,27 +2254,129 @@ public class PropMyItem : BaseUnityPlugin
         var menuDataBase = GameMain.Instance.MenuDataBase;
 
         Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles1 " + saveItems.Count);
+        Log.LogMessage("[PropMyItem] MenuDataBase entries = " + menuDataBase.GetDataSize());
         // foreach (string text2 in menuFiles)
         for (var j = 0; j < menuDataBase.GetDataSize(); j++)
         {
+            // 用游戏解析好的数据，不再自己读 .menu 文件（COM3D2.5 上格式有差异，手写解析器会整体失败）
             menuDataBase.SetIndex(j);
             var menuFileName = menuDataBase.GetMenuFileName();
+            var menuInfo = CreateMenuInfoFromDataBase(menuFileName);
             ParseMainMenuFile(menuFileName, list, ref variationMenuList, loadItems, dictionary,
                 favDic,
-                colorLockDic, ref saveItems);
+                colorLockDic, ref saveItems, menuInfo);
         }
 
         Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles2 " + saveItems.Count);
-        Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles2 " +
-                       saveItems[saveItems.Count - 1].FileName);
-        foreach (var menuFile in GameUty.ModOnlysMenuFiles)
-            ParseMainMenuFile(menuFile, list, ref variationMenuList, loadItems, dictionary, favDic,
-                colorLockDic,
-                ref saveItems);
+        if (saveItems.Count > 0)
+            Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles2 " +
+                           saveItems[saveItems.Count - 1].FileName);
+
+        var modMenuFiles = GameUty.ModOnlysMenuFiles;
+        Log.LogMessage("[PropMyItem] mod menus = " + (modMenuFiles == null ? -1 : modMenuFiles.Length));
+        var modIndex = 0;
+        if (modMenuFiles != null)
+            foreach (var menuFile in modMenuFiles)
+            {
+                ParseMainMenuFile(menuFile, list, ref variationMenuList, loadItems, dictionary, favDic,
+                    colorLockDic,
+                    ref saveItems);
+
+                modIndex++;
+                if (modIndex % 5000 == 0)
+                    Log.LogMessage("[PropMyItem] mod progress " + modIndex + " / " +
+                                   modMenuFiles.Length);
+            }
 
         Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles3 " + saveItems.Count);
-        Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles3 " +
-                       saveItems[saveItems.Count - 1].FileName);
+        if (saveItems.Count > 0)
+            Log.LogMessage("[PropMyItem] PropMyItem.GetMainMenuFiles3 " +
+                           saveItems[saveItems.Count - 1].FileName);
+    }
+
+    /// <summary>
+    ///     把 MenuDataBase 里已经解析好的当前条目（调用方已 SetIndex）转成 MenuInfo。
+    ///     游戏自己也是这么读的（SceneEdit.ReadMenuItemDataFromNative），而且这套 API 在
+    ///     2.x / 3.x 上完全一致，比手写 .menu 二进制解析可靠得多。
+    /// </summary>
+    private MenuInfo CreateMenuInfoFromDataBase(string fileName)
+    {
+        var menuDataBase = GameMain.Instance.MenuDataBase;
+
+        var raw = menuDataBase.GetCategoryMpn();
+        var mpn = ToMpn(raw);
+        if (mpn == Mpn.null_mpn)
+        {
+            // 原生层给的数值可能和托管枚举对不上，退回按名字解析一次
+            var mpnText = menuDataBase.GetCategoryMpnText();
+            if (!EnumUtil.TryParse(mpnText, true, out mpn) || mpn == Mpn.null_mpn)
+            {
+                _dbSkippedNoMpn++;
+                if (_dbNoMpnSamples.Length < 300)
+                    _dbNoMpnSamples += " " + fileName + "(" + raw + "/" + mpnText + ")";
+                return null;
+            }
+        }
+
+        // 图标只影响缩略图，缺了就缺了，不要因此丢掉整条（否则缓存会把「空图标」继承下去）
+        var iconName = menuDataBase.GetIconS();
+        if (string.IsNullOrEmpty(iconName))
+        {
+            _dbSkippedNoIcon++;
+            if (_dbSkippedSamples.Length < 160) _dbSkippedSamples += " " + fileName;
+        }
+
+        _dbAccepted++;
+
+        var itemName = menuDataBase.GetMenuName();
+        if (string.IsNullOrEmpty(itemName)) itemName = menuDataBase.GetItemName();
+        if (string.IsNullOrEmpty(itemName)) itemName = Path.GetFileNameWithoutExtension(fileName);
+
+        return new MenuInfo
+        {
+            MPN = mpn,
+            ItemName = itemName,
+            IconName = iconName,
+            Priority = menuDataBase.GetPriority(),
+            ColorSetMPN = ToMpn(menuDataBase.GetColorSetMpn()),
+            ColorSetMenuName = menuDataBase.GetMenuNameInColorSet()
+        };
+    }
+
+    /// <summary>把原生层给的整数转成 MPN，越界或未定义时退回 null_mpn。</summary>
+    private static MPN ToMpn(int value)
+    {
+        return Enum.IsDefined(typeof(MPN), value) ? (MPN)value : Mpn.null_mpn;
+    }
+
+    private int CountMenu(MPN mpn)
+    {
+        return _mpnMenuListDictionary.TryGetValue(mpn, out var list) ? list.Count : 0;
+    }
+
+    /// <summary>
+    ///     排查用：列出条目最多的 MPN 桶。2.5 把服装拆成叠穿槽位后，靠这行日志能直接看出
+    ///     道具实际落在哪个 MPN 上，不用再猜。
+    /// </summary>
+    private void LogMenuDistribution()
+    {
+        var entries = new List<KeyValuePair<MPN, List<MenuInfo>>>();
+        foreach (var pair in _mpnMenuListDictionary)
+            if (pair.Value.Count > 0)
+                entries.Add(pair);
+
+        entries.Sort((a, b) => b.Value.Count.CompareTo(a.Value.Count));
+
+        var text = "[PropMyItem] top MPN buckets:";
+        for (var i = 0; i < entries.Count && i < 25; i++)
+            text += " " + entries[i].Key + "=" + entries[i].Value.Count;
+
+        Log.LogMessage(text);
+        Log.LogMessage("[PropMyItem] db accepted=" + _dbAccepted +
+                       " noMpn=" + _dbSkippedNoMpn +
+                       " noIcon(kept)=" + _dbSkippedNoIcon +
+                       " sample:" + _dbSkippedSamples);
+        Log.LogMessage("[PropMyItem] db noMpn samples:" + _dbNoMpnSamples);
     }
 
     // lmao
@@ -2260,7 +2384,7 @@ public class PropMyItem : BaseUnityPlugin
         ref List<MenuInfo> variationMenuList,
         Dictionary<string, MenuInfo> loadItems, Dictionary<string, string> dictionary,
         Dictionary<string, string> favDic, Dictionary<string, string> colorLockDic,
-        ref List<SMenuInfo> saveItems)
+        ref List<SMenuInfo> saveItems, MenuInfo prebuilt = null)
     {
         var havePartsItems = GameMain.Instance.CharacterMgr.status.havePartsItems;
         try
@@ -2274,11 +2398,12 @@ public class PropMyItem : BaseUnityPlugin
 
                 if (!list.Contains(fileName))
                 {
-                    MenuInfo menuInfo = null;
-                    if (!loadItems.TryGetValue(fileName, out menuInfo))
+                    // prebuilt 来自 MenuDataBase；没有时（mod 菜单）才自己解析文件
+                    var menuInfo = prebuilt;
+                    if (menuInfo == null && !loadItems.TryGetValue(fileName, out menuInfo))
                         menuInfo = MenuModParser.ParseMenu(menuFile);
 
-                    if (menuInfo != null && menuInfo.MPN != MPN.null_mpn)
+                    if (menuInfo != null && menuInfo.MPN != Mpn.null_mpn)
                     {
                         menuInfo.FileName = fileName;
                         if (havePartsItems.ContainsKey(fileName))
@@ -2303,27 +2428,31 @@ public class PropMyItem : BaseUnityPlugin
                             menuInfo.CategoryName = empty;
 
                         list.Add(fileName);
-                        if (!string.IsNullOrEmpty(menuInfo.IconName))
+
+                        // 图标只影响缩略图，不再决定条目要不要入库。
+                        // 以前 IconName 为空时整条被丢掉，而缓存又会把这个「空图标」状态继承下去，
+                        // 结果就是界面永久空白，还查不出原因。
+                        var isVariation = Regex.IsMatch(menuFile, "_z\\d{1,4}") ||
+                                          menuFile.Contains("_zurashi") ||
+                                          menuFile.Contains("_mekure") ||
+                                          menuFile.Contains("_porori") ||
+                                          menuFile.Contains("_back");
+
+                        if (isVariation && !string.IsNullOrEmpty(menuInfo.IconName))
                         {
-                            if (Regex.IsMatch(menuFile, "_z\\d{1,4}") ||
-                                menuFile.Contains("_zurashi") ||
-                                menuFile.Contains("_mekure") || menuFile.Contains("_porori") ||
-                                menuFile.Contains("_back"))
-                            {
-                                variationMenuList.Add(menuInfo);
-                            }
-                            else
-                            {
-                                if (favDic.ContainsKey(menuInfo.FileName))
-                                    menuInfo.IsFavorite = true;
+                            variationMenuList.Add(menuInfo);
+                        }
+                        else
+                        {
+                            if (favDic.ContainsKey(menuInfo.FileName))
+                                menuInfo.IsFavorite = true;
 
-                                if (colorLockDic.ContainsKey(menuInfo.FileName))
-                                    menuInfo.IsColorLock = true;
+                            if (colorLockDic.ContainsKey(menuInfo.FileName))
+                                menuInfo.IsColorLock = true;
 
-                                menuInfo.ColorNumber = 0;
-                                menuInfo.VariationMenuList.Add(menuInfo);
-                                _mpnMenuListDictionary[menuInfo.MPN].Add(menuInfo);
-                            }
+                            menuInfo.ColorNumber = 0;
+                            menuInfo.VariationMenuList.Add(menuInfo);
+                            _mpnMenuListDictionary[menuInfo.MPN].Add(menuInfo);
                         }
 
                         saveItems.Add(new SMenuInfo(menuInfo));

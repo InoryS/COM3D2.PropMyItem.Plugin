@@ -14,15 +14,15 @@ public class AutoShoesHide
     {
         checkMPNs = new[]
         {
-            MPN.acchat,
-            MPN.headset,
-            MPN.wear,
-            MPN.skirt,
-            MPN.onepiece,
-            MPN.mizugi,
-            MPN.bra,
-            MPN.panz,
-            MPN.stkg
+            Mpn.acchat,
+            Mpn.headset,
+            Mpn.wear,
+            Mpn.skirt,
+            Mpn.onepiece,
+            Mpn.mizugi,
+            Mpn.bra,
+            Mpn.panz,
+            Mpn.stkg
         };
     }
 
@@ -38,50 +38,48 @@ public class AutoShoesHide
                     var bgname = GameMain.Instance.BgMgr.GetBGName();
                     if (!(_lastBGName == bgname) || _lastMaidCount != visibleMaidList.Count)
                     {
+                        // 目标背景（室内）里自动脱鞋；其他背景则把临时脱掉的鞋穿回去
                         if (PluginConfig.Instance.TargetBGList.Contains(bgname,
                                 StringComparer.OrdinalIgnoreCase))
-                            using (var enumerator = visibleMaidList.GetEnumerator())
+                        {
+                            foreach (var maid in visibleMaidList)
                             {
-                                while (enumerator.MoveNext())
-                                {
-                                    var maid = enumerator.Current;
-                                    if (maid.IsAllProcPropBusy) return;
+                                if (maid.IsAllProcPropBusy) return;
 
-                                    if (maid.GetProp(MPN.shoes).strTempFileName !=
-                                        "_i_shoes_del.menu")
+                                if (maid.GetProp(Mpn.shoes).strTempFileName !=
+                                    "_i_shoes_del.menu")
+                                {
+                                    Menu.SetMaidItemTemp(maid, "_i_shoes_del.menu", true);
+                                    maid.AllProcProp();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (var maid2 in visibleMaidList)
+                            {
+                                if (maid2.IsAllProcPropBusy) return;
+
+                                var wearingNothingChanged = true;
+                                foreach (var mpn in checkMPNs)
+                                {
+                                    var prop = maid2.GetProp(mpn);
+                                    if (prop.strFileName == prop.strTempFileName)
                                     {
-                                        Menu.SetMaidItemTemp(maid, "_i_shoes_del.menu", true);
-                                        maid.AllProcProp();
+                                        wearingNothingChanged = false;
+                                        break;
                                     }
                                 }
 
-                                goto IL_184;
-                            }
-
-                        foreach (var maid2 in visibleMaidList)
-                        {
-                            if (maid2.IsAllProcPropBusy) return;
-
-                            var flag = true;
-                            foreach (var mpn in checkMPNs)
-                            {
-                                var prop = maid2.GetProp(mpn);
-                                if (prop.strFileName == prop.strTempFileName)
+                                if (wearingNothingChanged && maid2.GetProp(Mpn.shoes).strTempFileName ==
+                                    "_i_shoes_del.menu")
                                 {
-                                    flag = false;
-                                    break;
+                                    maid2.ResetProp(Mpn.shoes);
+                                    maid2.AllProcProp();
                                 }
-                            }
-
-                            if (flag && maid2.GetProp(MPN.shoes).strTempFileName ==
-                                "_i_shoes_del.menu")
-                            {
-                                maid2.ResetProp(MPN.shoes);
-                                maid2.AllProcProp();
                             }
                         }
 
-                        IL_184:
                         _lastBGName = bgname;
                         _lastMaidCount = visibleMaidList.Count;
                     }

@@ -9,7 +9,7 @@ public class MenuInfo
 
     public int ColorNumber;
 
-    public MPN ColorSetMPN = MPN.head;
+    public MPN ColorSetMPN = Mpn.head;
 
     public List<MenuInfo> ColorSetMenuList = new();
 
@@ -37,7 +37,7 @@ public class MenuInfo
 
     public string ItemName = string.Empty;
 
-    public MPN MPN = MPN.head;
+    public MPN MPN = Mpn.head;
 
     public float Priority;
 
