@@ -34,7 +34,7 @@ namespace COM3D2.PropMyItem.Plugin
             {
                 if (_config == null)
                 {
-                    var text = Directory.GetCurrentDirectory() + "\\Sybaris\\UnityInjector\\Config\\PropMyItem.xml";
+                    var text = ConfigPath.Resolve("PropMyItem.xml");
                     _config = new Config();
                     _config.SetDefault();
                     if (File.Exists(text))
@@ -103,7 +103,7 @@ namespace COM3D2.PropMyItem.Plugin
         // Token: 0x06000010 RID: 16 RVA: 0x00002684 File Offset: 0x00000884
         public void Save()
         {
-            var filePath = Directory.GetCurrentDirectory() + "\\Sybaris\\UnityInjector\\Config\\PropMyItem.xml";
+            var filePath = ConfigPath.Resolve("PropMyItem.xml");
             Save(filePath);
         }
 

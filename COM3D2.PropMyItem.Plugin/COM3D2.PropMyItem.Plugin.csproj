@@ -23,13 +23,10 @@
         <PackageReference Include="BepInEx.Analyzers" PrivateAssets="all" Version="1.*"/>
         <PackageReference Include="BepInEx.Core" Version="5.*"/>
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*"/>
-      </ItemGroup>
-      <ItemGroup>
-        <!-- net35 没有 Task，沿用 BepInEx 附带的 BCL 异步补充包 -->
-        <Reference Include="System.Threading">
-          <HintPath>..\packages\System.Threading.dll</HintPath>
-          <Private>false</Private>
-        </Reference>
+        <!-- net35 没有 Task，用微软官方的 TPL 回移包（内含 lib/Net35/System.Threading.dll）。
+             游戏 Managed 目录和 BepInEx 都不带这个程序集，所以必须随插件一起发布：
+             构建产物里会多出 System.Threading.dll，装插件时和插件 dll 一起丢进 BepInEx\plugins\。 -->
+        <PackageReference Include="TaskParallelLibrary" Version="1.0.2856"/>
       </ItemGroup>
     </When>
 

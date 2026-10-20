@@ -28,7 +28,10 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: COM3D2.PropMyItem.Plugin-COM3D2
-          path: COM3D2.PropMyItem.Plugin/bin/Release/COM3D2/net35/COM3D2.PropMyItem.Plugin.dll
+          # net35 没有 Task，System.Threading.dll 必须跟着插件一起发
+          path: |
+            COM3D2.PropMyItem.Plugin/bin/Release/COM3D2/net35/COM3D2.PropMyItem.Plugin.dll
+            COM3D2.PropMyItem.Plugin/bin/Release/COM3D2/net35/System.Threading.dll
 
       - name: Publish Artifact (COM3D2.5)
         uses: actions/upload-artifact@v7

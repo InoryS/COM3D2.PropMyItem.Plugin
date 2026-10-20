@@ -132,8 +132,7 @@ namespace COM3D2.PropMyItem.Plugin
             {
                 if (_config == null)
                 {
-                    var text = Directory.GetCurrentDirectory() +
-                               "\\Sybaris\\UnityInjector\\Config\\PropMyItemUser.xml";
+                    var text = ConfigPath.Resolve("PropMyItemUser.xml");
                     _config = new UserConfig();
                     if (File.Exists(text))
                         _config.Load(text);
@@ -185,7 +184,7 @@ namespace COM3D2.PropMyItem.Plugin
         // Token: 0x06000067 RID: 103 RVA: 0x00008534 File Offset: 0x00006734
         public void Save()
         {
-            var filePath = Directory.GetCurrentDirectory() + "\\Sybaris\\UnityInjector\\Config\\PropMyItemUser.xml";
+            var filePath = ConfigPath.Resolve("PropMyItemUser.xml");
             Save(filePath);
         }
 
