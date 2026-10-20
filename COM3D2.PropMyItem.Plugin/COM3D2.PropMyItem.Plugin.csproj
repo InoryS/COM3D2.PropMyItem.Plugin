@@ -98,9 +98,10 @@
     <RootNamespace>COM3D2.PropMyItem.Plugin</RootNamespace>
     <Product>COM3D2.PropMyItem.Plugin</Product>
     <Company>InoryS</Company>
-    <Version>2.4.0.6</Version>
-    <AssemblyVersion>2.4.0.6</AssemblyVersion>
-    <FileVersion>2.4.0.6</FileVersion>
+
+    <!-- 版本号唯一来源是 PluginInfo.cs 的 PluginVersion 常量（游戏里显示的也是它），
+         csproj 里不再重复写。AssemblyVersion / FileVersion 由 SDK 从 <Version> 推导。 -->
+    <Version>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)/PluginInfo.cs')), 'PluginVersion\s*=\s*&quot;([0-9][0-9.]*)&quot;').Groups[1].Value)</Version>
 
     <!-- 兜底 TFM：未匹配到上面任何配置时先给出可读报错（见 CheckGameConfiguration），
          否则会在还原阶段抛出难懂的 NETSDK1013 -->
