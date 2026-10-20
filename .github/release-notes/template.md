@@ -2,18 +2,21 @@
 
 This release provides two builds of the same plugin. **Download the one matching your game:**
 
-- `COM3D2.PropMyItem.Plugin-COM3D2-{{VERSION}}.zip` — for COM3D2 (2.x, Unity 5.6.4)
-- `COM3D2.PropMyItem.Plugin-COM3D25-{{VERSION}}.zip` — for COM3D2.5 (3.x, Unity 2022.3)
+- `COM3D2.PropMyItem.Plugin-{{VERSION}}.zip` — for COM3D2 (2.x, Unity 5.6.4)
+- `COM3D25.PropMyItem.Plugin-{{VERSION}}.zip` — for COM3D2.5 (3.x, Unity 2022.3)
 
-Both builds produce the same `COM3D2.PropMyItem.Plugin.dll`, so install only one of them.
+The plugin dll is named after the archive, so install only one of them.
+If you installed an earlier build as `COM3D2.PropMyItem.Plugin.dll` on COM3D2.5, delete that file first —
+two copies would load with the same plugin ID.
 
 # Install
 
 Extract the zip into your game root, so that the files end up at:
 
 ```
-COM3D2/BepInEx/plugins/COM3D2.PropMyItem.Plugin.dll
-COM3D2/BepInEx/plugins/System.Threading.dll      (COM3D2 build only, required)
+COM3D2/BepInEx/plugins/COM3D2.PropMyItem.Plugin.dll     (COM3D2 build)
+COM3D2/BepInEx/plugins/System.Threading.dll             (COM3D2 build only, required)
+COM3D2/BepInEx/plugins/COM3D25.PropMyItem.Plugin.dll    (COM3D2.5 build)
 ```
 
 The COM3D2 build needs `System.Threading.dll` because .NET 3.5 has no `Task`; it is included in the zip.
@@ -37,18 +40,21 @@ Default hotkey: `I` toggles the GUI. There is also a button in the gear menu.
 
 本次发布提供同一插件的两个版本，**请下载与你的游戏对应的那个**：
 
-- `COM3D2.PropMyItem.Plugin-COM3D2-{{VERSION}}.zip` — 对应 COM3D2（2.x，Unity 5.6.4）
-- `COM3D2.PropMyItem.Plugin-COM3D25-{{VERSION}}.zip` — 对应 COM3D2.5（3.x，Unity 2022.3）
+- `COM3D2.PropMyItem.Plugin-{{VERSION}}.zip` — 对应 COM3D2（2.x，Unity 5.6.4）
+- `COM3D25.PropMyItem.Plugin-{{VERSION}}.zip` — 对应 COM3D2.5（3.x，Unity 2022.3）
 
-两个版本产出的 dll 文件名相同，只需安装其中一个。
+插件 dll 名与压缩包名一致，只需安装其中一个。
+如果你之前在 COM3D2.5 上装过旧版的 `COM3D2.PropMyItem.Plugin.dll`，请先删掉那个文件——
+两份共存会用同一个插件 ID 重复加载。
 
 # 安装
 
 把 zip 解压到游戏根目录，最终文件位置应为：
 
 ```
-COM3D2/BepInEx/plugins/COM3D2.PropMyItem.Plugin.dll
-COM3D2/BepInEx/plugins/System.Threading.dll      （仅 COM3D2 版需要，必需）
+COM3D2/BepInEx/plugins/COM3D2.PropMyItem.Plugin.dll     （COM3D2 版）
+COM3D2/BepInEx/plugins/System.Threading.dll             （仅 COM3D2 版需要，必需）
+COM3D2/BepInEx/plugins/COM3D25.PropMyItem.Plugin.dll    （COM3D2.5 版）
 ```
 
 COM3D2 版需要 `System.Threading.dll`，因为 .NET 3.5 没有 `Task`；该文件已包含在压缩包内，

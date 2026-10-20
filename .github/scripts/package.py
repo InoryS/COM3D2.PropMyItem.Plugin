@@ -5,18 +5,19 @@
 
 解压到游戏根目录即可，包内布局与插件运行时读取的路径一致：
 
-    BepInEx/plugins/COM3D2.PropMyItem.Plugin.dll
-    BepInEx/plugins/System.Threading.dll      （仅 COM3D2 / net35，见下）
+    BepInEx/plugins/COM3D2.PropMyItem.Plugin.dll     （COM3D2 版）
+    BepInEx/plugins/System.Threading.dll             （仅 COM3D2 / net35，见下）
+    BepInEx/plugins/COM3D25.PropMyItem.Plugin.dll    （COM3D2.5 版）
     README.md
 
-两个版本的插件 dll 同名，靠 zip 文件名区分，安装时只会用到其中一个。
+两个版本的 dll 名字不同（COM3D25 前缀），zip 名直接取 dll 名，所以一眼能看出该下哪个。
 
 COM3D2（Unity 5.6.4 / net35）没有 System.Threading.Tasks，插件用 Task 做后台菜单扫描，
 而游戏 Managed 目录和 BepInEx 都不带 System.Threading.dll，所以必须随包分发；
 COM3D2.5（net48）的 Task 在 mscorlib 里，不需要。
 
 The zip mirrors the layout the plugin expects after extracting into the game root.
-Both builds share the same dll name; the zip name tells them apart.
+The two builds have different dll names (COM3D25 prefix) and the zip name follows the dll name.
 COM3D2 (net35) has no System.Threading.Tasks, and neither the game nor BepInEx ships
 System.Threading.dll, so it has to travel with the plugin. COM3D2.5 (net48) does not need it.
 """
@@ -26,13 +27,16 @@ import os
 import sys
 import zipfile
 
-PLUGIN_DLL = "COM3D2.PropMyItem.Plugin.dll"
-ZIP_PREFIX = "COM3D2.PropMyItem.Plugin"
-
 # 目标定义 / Target definitions
 TARGETS = {
-    "COM3D2": {"build_dir": os.path.join("COM3D2", "net35")},
-    "COM3D25": {"build_dir": os.path.join("COM3D25", "net48")},
+    "COM3D2": {
+        "build_dir": os.path.join("COM3D2", "net35"),
+        "plugin_dll": "COM3D2.PropMyItem.Plugin.dll",
+    },
+    "COM3D25": {
+        "build_dir": os.path.join("COM3D25", "net48"),
+        "plugin_dll": "COM3D25.PropMyItem.Plugin.dll",
+    },
 }
 
 PLUGIN_DIR_IN_ZIP = "BepInEx/plugins"
@@ -59,7 +63,7 @@ def add_file(zf, src, arcname):
 def main():
     parser = argparse.ArgumentParser(description="Assemble a release zip")
     parser.add_argument("--target", required=True, choices=sorted(TARGETS))
-    parser.add_argument("--version", required=True, help="例如 2.4.0.6 / e.g. 2.4.0.6")
+    parser.add_argument("--version", required=True, help="例如 2.5.0.0 / e.g. 2.5.0.0")
     parser.add_argument("--build-root", required=True,
                         help="dotnet build 的输出根目录（bin/Release）/ dotnet build output root")
     parser.add_argument("--repo-root", default=".", help="仓库根目录 / repository root")
@@ -67,6 +71,7 @@ def main():
     args = parser.parse_args()
 
     target = TARGETS[args.target]
+    plugin_dll = target["plugin_dll"]
     repo_root = os.path.abspath(args.repo_root)
     build_dir = os.path.join(os.path.abspath(args.build_root), target["build_dir"])
     readme = os.path.join(repo_root, "README.md")
@@ -79,12 +84,13 @@ def main():
     # pdb 不进包；其余 dll 都是运行期需要的东西（插件本体 + 可能的依赖）
     # No pdb in the archive; every other dll is needed at runtime
     dlls = sorted(n for n in os.listdir(build_dir) if n.lower().endswith(".dll"))
-    if PLUGIN_DLL not in dlls:
-        sys.exit(f"::error::{PLUGIN_DLL} not found in {build_dir}, got {dlls}")
+    if plugin_dll not in dlls:
+        sys.exit(f"::error::{plugin_dll} not found in {build_dir}, got {dlls}")
 
+    # zip 名直接取 dll 名：COM3D2.PropMyItem.Plugin-<ver>.zip / COM3D25.PropMyItem.Plugin-<ver>.zip
+    zip_prefix = os.path.splitext(plugin_dll)[0]
     os.makedirs(os.path.join(repo_root, args.output_dir), exist_ok=True)
-    zip_path = os.path.join(
-        repo_root, args.output_dir, f"{ZIP_PREFIX}-{args.target}-{args.version}.zip")
+    zip_path = os.path.join(repo_root, args.output_dir, f"{zip_prefix}-{args.version}.zip")
 
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
         add_dir(zf, "BepInEx")
@@ -102,8 +108,8 @@ def main():
     bad = [n for n in names if n.lower().endswith(".pdb")]
     if bad:
         sys.exit(f"::error::unexpected entries in {zip_path}: {bad}")
-    if f"{PLUGIN_DIR_IN_ZIP}/{PLUGIN_DLL}" not in names:
-        sys.exit(f"::error::{PLUGIN_DLL} missing from {zip_path}")
+    if f"{PLUGIN_DIR_IN_ZIP}/{plugin_dll}" not in names:
+        sys.exit(f"::error::{plugin_dll} missing from {zip_path}")
 
     size = os.path.getsize(zip_path)
     print(f"built {zip_path} ({len(names)} entries, {size} bytes)")

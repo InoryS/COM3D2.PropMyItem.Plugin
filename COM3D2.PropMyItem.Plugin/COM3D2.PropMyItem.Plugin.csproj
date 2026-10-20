@@ -46,6 +46,7 @@
     <!-- COM3D2 构建配置 -->
     <When Condition="'$(Configuration)|$(Platform)' == 'COM3D2-Debug|AnyCPU'">
       <PropertyGroup>
+        <AssemblyName>COM3D2.PropMyItem.Plugin</AssemblyName>
         <DebugType>full</DebugType>
         <DefineConstants>COM3D2;DEBUG;TRACE</DefineConstants>
         <Optimize>false</Optimize>
@@ -55,6 +56,7 @@
     </When>
     <When Condition="'$(Configuration)|$(Platform)' == 'COM3D2-Release|AnyCPU'">
       <PropertyGroup>
+        <AssemblyName>COM3D2.PropMyItem.Plugin</AssemblyName>
         <DebugType>pdbonly</DebugType>
         <DefineConstants>COM3D2</DefineConstants>
         <Optimize>true</Optimize>
@@ -63,9 +65,10 @@
       </PropertyGroup>
     </When>
 
-    <!-- COM3D2.5 构建配置 -->
+    <!-- COM3D2.5 构建配置：程序集名带 COM3D25 前缀，和 COM3D2 版区分开 -->
     <When Condition="'$(Configuration)|$(Platform)' == 'COM3D25_UNITY_2022-Debug|AnyCPU'">
       <PropertyGroup>
+        <AssemblyName>COM3D25.PropMyItem.Plugin</AssemblyName>
         <DebugType>full</DebugType>
         <DefineConstants>COM3D25_UNITY_2022;DEBUG;TRACE</DefineConstants>
         <Optimize>false</Optimize>
@@ -75,6 +78,7 @@
     </When>
     <When Condition="'$(Configuration)|$(Platform)' == 'COM3D25_UNITY_2022-Release|AnyCPU'">
       <PropertyGroup>
+        <AssemblyName>COM3D25.PropMyItem.Plugin</AssemblyName>
         <DebugType>pdbonly</DebugType>
         <DefineConstants>COM3D25_UNITY_2022</DefineConstants>
         <Optimize>true</Optimize>
@@ -92,7 +96,6 @@
 
   <PropertyGroup>
     <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
-    <AssemblyName>COM3D2.PropMyItem.Plugin</AssemblyName>
 
     <Company>InoryS</Company>
     <Configurations>COM3D2-Debug;COM3D2-Release;COM3D25_UNITY_2022-Debug;COM3D25_UNITY_2022-Release</Configurations>
