@@ -385,49 +385,90 @@ public class PropMyItem : BaseUnityPlugin
     private static string _dbSkippedSamples = string.Empty;
     private static string _dbNoMpnSamples = string.Empty;
 
-    private bool _isDraggingWindow;    private Vector2 _dragStartMousePosition;
-    private Vector2 _dragStartWindowPosition;
+    // 拖动状态。全部由 IMGUI 事件驱动，不用 Input.*：
+    // ShowCounterHandler 每帧都会调 Input.ResetInputAxes()，OnGUI 里读按键永远是「未按下」。
+    private const float DragThreshold = 3f; // 逻辑像素；小于它算点击，不算拖动
 
-    // 本帧 MouseDown 时的鼠标位置（逻辑屏幕坐标），点中空白处才拿它当拖动起点
-    private Vector2 _mouseDownPosition;
+    private bool _isDraggingWindow; // 这次按下是否落在窗口空白处（可以拖）
+    private bool _isDragStarted;    // 位移已超过阈值，真正开始移动窗口
+
+    private Vector2 _dragStartMousePosition;
+    private Vector2 _dragStartWindowPosition;
 
     /// <summary>
     ///     代替 GUI.DragWindow()。它按 Event.delta 移动窗口，而 delta 是屏幕像素、
     ///     窗口矩形却在缩放后的逻辑坐标里，高倍率下窗口会跑得比鼠标快。
-    ///     这里全程用 IMGUI 事件的坐标（OnGUI 里已经是逻辑坐标，和 _windowRect 同一套）。
-    ///     注意不能用 Input.GetMouseButton 判断按下状态：ShowCounterHandler 里每帧都会调
-    ///     Input.ResetInputAxes()，按键会在 OnGUI 时读成未按下。
+    ///     这里全程用 IMGUI 事件的坐标（OnGUI 里已经是 GUI.matrix 换算后的逻辑坐标，
+    ///     和 _windowRect 同一套，所以不用再除以倍数）。
+    ///
+    ///     关键是**拖动状态必须能可靠结束**，否则会「飘」：
+    ///     - 用 rawType 判断 MouseUp，不能用 type。控件命中 MouseUp 时会 Event.Use()，
+    ///       type 变成 Used，只看 type 就会漏掉，状态一直挂着；之后随便点一下（鼠标
+    ///       抖动一两像素就会发 MouseDrag），窗口按「旧锚点 → 当前位置」的大位移瞬移，
+    ///       再被 Clamp 一夹，看起来就是直接飞到屏幕角落。
+    ///     - 鼠标在窗口外松开时根本收不到 MouseUp，靠 MouseMove（只在无按键时才发）兜底。
+    ///     - 每次按下都重新锚定，绝不复用上一轮的坐标。
     /// </summary>
     private void HandleWindowDragEvents()
     {
         var current = Event.current;
 
-        if (current.type == EventType.MouseDown && current.button == 0)
-            _mouseDownPosition = current.mousePosition;
-        else if (current.type == EventType.MouseUp)
+        // 左键按下：重新锚定，先当作「未开始拖」，等窗口函数确认点在空白处
+        if (current.rawType == EventType.MouseDown && current.button == 0)
+        {
+            _dragStartMousePosition = current.mousePosition;
+            _dragStartWindowPosition = _windowRect.position;
             _isDraggingWindow = false;
+            _isDragStarted = false;
+        }
+
+        // 松手就结束。rawType 能穿透 Event.Use()，控件吃掉的 MouseUp 也照样能收到
+        if (current.rawType == EventType.MouseUp)
+        {
+            _isDraggingWindow = false;
+            _isDragStarted = false;
+            return;
+        }
+
+        // 无按键时 Unity 才会发 MouseMove：说明刚才在窗口外松手了
+        if (current.rawType == EventType.MouseMove)
+        {
+            _isDraggingWindow = false;
+            _isDragStarted = false;
+            return;
+        }
 
         if (!_isDraggingWindow) return;
 
-        // 只在拖动事件里更新位置：Layout / Repaint 时 Event.current.mousePosition 不可靠，
-        // 拿它算位移会让窗口乱跳（表现就是「拖动太敏感」）
-        if (current.type != EventType.MouseDrag) return;
+        // 只在 MouseDrag 里更新位置：Layout / Repaint 时 mousePosition 不可靠
+        if (current.type != EventType.MouseDrag || current.button != 0) return;
 
-        _windowRect.position = _dragStartWindowPosition +
-                               (current.mousePosition - _dragStartMousePosition);
+        var offset = current.mousePosition - _dragStartMousePosition;
+
+        // 没超过阈值就当作点击，窗口不动（否则手抖一下窗口就漂）
+        if (!_isDragStarted)
+        {
+            if (offset.sqrMagnitude < DragThreshold * DragThreshold) return;
+            _isDragStarted = true;
+        }
+
+        _windowRect.position = _dragStartWindowPosition + offset;
     }
 
     /// <summary>
     ///     在窗口函数末尾调用。控件处理过的 MouseDown 会被 Event.Use() 变成 Used，
-    ///     只有点在空白处才还是 MouseDown，据此区分点击与拖动。
+    ///     只有点在空白处才还是 MouseDown，据此区分「点按钮」和「拖窗口」。
     ///     （不能用 GUIUtility.hotControl 判断，窗口自己会占住它。）
     /// </summary>
     private void BeginWindowDragIfNeeded()
     {
-        if (Event.current.type != EventType.MouseDown || Event.current.button != 0) return;
+        var current = Event.current;
+        if (current.rawType != EventType.MouseDown || current.button != 0) return;
+        if (current.type != EventType.MouseDown) return; // 已被某个控件吃掉
 
         _isDraggingWindow = true;
-        _dragStartMousePosition = _mouseDownPosition;
+        _isDragStarted = false;
+        _dragStartMousePosition = current.mousePosition;
         _dragStartWindowPosition = _windowRect.position;
     }
 
