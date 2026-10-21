@@ -30,6 +30,9 @@ public class PropMyItem : BaseUnityPlugin
 
     private readonly Dictionary<string, MPN> _categoryMPNDic = new();
 
+    // 构造函数里发现的问题（重名、解析成 null_mpn 等），Awake 里再打到日志上
+    private readonly List<string> _initWarnings = new();
+
     private readonly List<FolderMenu> _folders = new();
 
     //private Dictionary<MPN, string> presetRestoreDic_ = new Dictionary<MPN, string>();
@@ -158,7 +161,7 @@ public class PropMyItem : BaseUnityPlugin
             "ネックレス",
             "チョーカー",
             "リボン",
-            "乳首",
+            "　乳首　",
             "腕",
             "へそ",
             "足首",
@@ -189,79 +192,91 @@ public class PropMyItem : BaseUnityPlugin
         }));
         _folders.Add(new FolderMenu("全て", new string[0]));
         _folders.Add(new FolderMenu("選択中", new string[0]));
-        _categoryMPNDic.Add("顔", Mpn.head);
-        _categoryMPNDic.Add("眉", Mpn.folder_mayu);
-        _categoryMPNDic.Add("目", Mpn.folder_eye);
-        _categoryMPNDic.Add("目ハイライト", Mpn.eye_hi);
-        _categoryMPNDic.Add("ほくろ", Mpn.hokuro);
-        _categoryMPNDic.Add("唇", Mpn.lip);
-        _categoryMPNDic.Add("歯", Mpn.accha);
+        // 不可有重复的名称
+        AddCategory("顔", Mpn.head);
+        AddCategory("眉", Mpn.folder_mayu);
+        AddCategory("目", Mpn.folder_eye);
+        AddCategory("目ハイライト", Mpn.eye_hi);
+        AddCategory("ほくろ", Mpn.hokuro);
+        AddCategory("唇", Mpn.lip);
+        AddCategory("歯", Mpn.accha);
 
-        _categoryMPNDic.Add("上まつげ", Mpn.folder_matsuge_up);
-        _categoryMPNDic.Add("下まつげ", Mpn.folder_matsuge_low);
-        _categoryMPNDic.Add("二重まぶた", Mpn.folder_futae);
+        AddCategory("上まつげ", Mpn.folder_matsuge_up);
+        AddCategory("下まつげ", Mpn.folder_matsuge_low);
+        AddCategory("二重まぶた", Mpn.folder_futae);
 
-        _categoryMPNDic.Add("前髪", Mpn.hairf);
-        _categoryMPNDic.Add("後髪", Mpn.hairr);
-        _categoryMPNDic.Add("横髪", Mpn.hairs);
-        _categoryMPNDic.Add("エクステ髪", Mpn.hairt);
-        _categoryMPNDic.Add("アホ毛", Mpn.hairaho);
-        _categoryMPNDic.Add("肌", Mpn.folder_skin);
-        _categoryMPNDic.Add("乳首", Mpn.chikubi);
-        _categoryMPNDic.Add("タトゥー", Mpn.acctatoo);
-        _categoryMPNDic.Add("アンダーヘア", Mpn.folder_underhair);
-        _categoryMPNDic.Add("ボディ", Mpn.body);
-        _categoryMPNDic.Add("帽子", Mpn.acchat);
-        _categoryMPNDic.Add("ヘッドドレス", Mpn.headset);
-        _categoryMPNDic.Add("トップス", Mpn.wear);
-        _categoryMPNDic.Add("ボトムス", Mpn.skirt);
-        _categoryMPNDic.Add("ワンピース", Mpn.onepiece);
-        _categoryMPNDic.Add("水着", Mpn.mizugi);
-        _categoryMPNDic.Add("ブラジャー", Mpn.bra);
-        _categoryMPNDic.Add("パンツ", Mpn.panz);
-        _categoryMPNDic.Add("靴下", Mpn.stkg);
-        _categoryMPNDic.Add("靴", Mpn.shoes);
-        _categoryMPNDic.Add(" 前髪 ", Mpn.acckami);
-        _categoryMPNDic.Add("メガネ", Mpn.megane);
-        _categoryMPNDic.Add("アイマスク", Mpn.acchead);
-        _categoryMPNDic.Add("鼻", Mpn.acchana);
-        _categoryMPNDic.Add("耳", Mpn.accmimi);
-        _categoryMPNDic.Add("手袋", Mpn.glove);
-        _categoryMPNDic.Add("ネックレス", Mpn.acckubi);
-        _categoryMPNDic.Add("チョーカー", Mpn.acckubiwa);
-        _categoryMPNDic.Add("リボン", Mpn.acckamisub);
-        _categoryMPNDic.Add("乳首", Mpn.accnip);
-        _categoryMPNDic.Add("腕", Mpn.accude);
-        _categoryMPNDic.Add("へそ", Mpn.accheso);
-        _categoryMPNDic.Add("足首", Mpn.accashi);
-        _categoryMPNDic.Add("背中", Mpn.accsenaka);
-        _categoryMPNDic.Add("しっぽ", Mpn.accshippo);
-        _categoryMPNDic.Add("前穴", Mpn.accxxx);
-        _categoryMPNDic.Add("メイド服", Mpn.set_maidwear);
-        _categoryMPNDic.Add("コスチューム", Mpn.set_mywear);
-        _categoryMPNDic.Add("下着", Mpn.set_underwear);
-        _categoryMPNDic.Add("身体", Mpn.set_body);
+        AddCategory("前髪", Mpn.hairf);
+        AddCategory("後髪", Mpn.hairr);
+        AddCategory("横髪", Mpn.hairs);
+        AddCategory("エクステ髪", Mpn.hairt);
+        AddCategory("アホ毛", Mpn.hairaho);
+        AddCategory("肌", Mpn.folder_skin);
+        AddCategory("乳首", Mpn.chikubi);
+        AddCategory("タトゥー", Mpn.acctatoo);
+        AddCategory("アンダーヘア", Mpn.folder_underhair);
+        AddCategory("ボディ", Mpn.body);
+        AddCategory("帽子", Mpn.acchat);
+        AddCategory("ヘッドドレス", Mpn.headset);
+        AddCategory("トップス", Mpn.wear);
+        AddCategory("ボトムス", Mpn.skirt);
+        AddCategory("ワンピース", Mpn.onepiece);
+        AddCategory("水着", Mpn.mizugi);
+        AddCategory("ブラジャー", Mpn.bra);
+        AddCategory("パンツ", Mpn.panz);
+        AddCategory("靴下", Mpn.stkg);
+        AddCategory("靴", Mpn.shoes);
+        AddCategory(" 前髪 ", Mpn.acckami);
+        AddCategory("メガネ", Mpn.megane);
+        AddCategory("アイマスク", Mpn.acchead);
+        AddCategory("鼻", Mpn.acchana);
+        AddCategory("耳", Mpn.accmimi);
+        AddCategory("手袋", Mpn.glove);
+        AddCategory("ネックレス", Mpn.acckubi);
+        AddCategory("チョーカー", Mpn.acckubiwa);
+        AddCategory("リボン", Mpn.acckamisub);
+        AddCategory("　乳首　", Mpn.accnip);
+        AddCategory("腕", Mpn.accude);
+        AddCategory("へそ", Mpn.accheso);
+        AddCategory("足首", Mpn.accashi);
+        AddCategory("背中", Mpn.accsenaka);
+        AddCategory("しっぽ", Mpn.accshippo);
+        AddCategory("前穴", Mpn.accxxx);
+        AddCategory("メイド服", Mpn.set_maidwear);
+        AddCategory("コスチューム", Mpn.set_mywear);
+        AddCategory("下着", Mpn.set_underwear);
+        AddCategory("身体", Mpn.set_body);
 
-        _categoryMPNDic.Add("鞏膜", Mpn.folder_eyewhite);
+        AddCategory("鞏膜", Mpn.folder_eyewhite);
 
-        _categoryMPNDic.Add("accanl", Mpn.accanl);
-        _categoryMPNDic.Add("指甲", Mpn.accnail);
-        _categoryMPNDic.Add("accvag", Mpn.accvag);
-        _categoryMPNDic.Add("moza", Mpn.moza);
+        AddCategory("accanl", Mpn.accanl);
+        AddCategory("指甲", Mpn.accnail);
+        AddCategory("accvag", Mpn.accvag);
+        AddCategory("moza", Mpn.moza);
 
-        _categoryMPNDic.Add("chikubicolor", Mpn.chikubicolor);
+        AddCategory("chikubicolor", Mpn.chikubicolor);
 
         // 上面按名字解析出来的 2.5 新槽位
-        foreach (var pair in extraCategories) _categoryMPNDic.Add(pair.Key, pair.Value);
+        foreach (var pair in extraCategories) AddCategory(pair.Key, pair.Value);
 
         foreach (var text in _categoryMPNDic.Keys)
-            _menuMPNCategoryDic.Add(_categoryMPNDic[text], text);
+        {
+            var mpn = _categoryMPNDic[text];
+            if (_menuMPNCategoryDic.ContainsKey(mpn))
+            {
+                _initWarnings.Add($"category '{text}' shares {mpn} with '{_menuMPNCategoryDic[mpn]}'");
+                continue;
+            }
+
+            _menuMPNCategoryDic[mpn] = text;
+        }
+
+        // 分类名解析成 null_mpn 时，界面上那一栏既没有搜索框也没有列表，先记下来
+        foreach (var pair in _categoryMPNDic)
+            if (pair.Value == Mpn.null_mpn)
+                _initWarnings.Add($"category '{pair.Key}' resolved to null_mpn");
 
         foreach (var obj in Enum.GetValues(typeof(MPN)))
-        {
-            var key = (MPN)obj;
-            _mpnMenuListDictionary.Add(key, new List<MenuInfo>());
-        }
+            _mpnMenuListDictionary[(MPN)obj] = new List<MenuInfo>();
     }
 
     private ConfigEntry<KeyboardShortcut> ShowCounter { get; set; }
@@ -288,6 +303,25 @@ public class PropMyItem : BaseUnityPlugin
         { "手持ち", "handitem" }
     };
 
+    /// <summary>
+    ///     登记「分类名 → MPN」。
+    ///     必须用索引器而不是 Dictionary.Add：分类表是手写的，一旦两个分类重名
+    ///     （例如身体和配饰都有「乳首」），Add 会抛 ArgumentException，构造函数里
+    ///     后面所有初始化（反向表、MPN 桶）会被一起跳过——界面上表现为某几栏
+    ///     连搜索框都没有，而且没有任何报错可查。
+    /// </summary>
+    private void AddCategory(string name, MPN mpn)
+    {
+        if (_categoryMPNDic.ContainsKey(name))
+        {
+            _initWarnings.Add(
+                $"duplicate category '{name}': kept {_categoryMPNDic[name]}, ignored {mpn}");
+            return;
+        }
+
+        _categoryMPNDic[name] = mpn;
+    }
+
     /// <summary>把「分类名 → MPN 名」中当前游戏版本能解析出来的项追加到分类列表。</summary>
     private static void AppendResolvableCategories(Dictionary<string, string> source, List<string> target,
         Dictionary<string, MPN> resolved)
@@ -308,6 +342,9 @@ public class PropMyItem : BaseUnityPlugin
     {
         Log = Logger;
         Log.LogMessage("[PropMyItem] Awake");
+        Log.LogMessage($"[PropMyItem] categories = {_categoryMPNDic.Count}," +
+                       $" reverse = {_menuMPNCategoryDic.Count}");
+        foreach (var warning in _initWarnings) Log.LogWarning("[PropMyItem] " + warning);
 
         ShowCounter = Config.Bind("Hotkeys", "Show GUI", new KeyboardShortcut(KeyCode.I));
     }
