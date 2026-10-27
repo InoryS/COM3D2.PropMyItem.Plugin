@@ -95,7 +95,7 @@ public class PropMyItem : BaseUnityPlugin
 
     private MenuInfo _selectedVariationItem;
 
-    private Rect _windowRect;
+    private Rect _windowRect = new(0f, 0f, 800f, 600f);
     private bool isAllMaid;
     private Task task;
 
@@ -385,167 +385,138 @@ public class PropMyItem : BaseUnityPlugin
     private static string _dbSkippedSamples = string.Empty;
     private static string _dbNoMpnSamples = string.Empty;
 
-    // 拖动状态。全部由 IMGUI 事件驱动，不用 Input.*：
-    // ShowCounterHandler 每帧都会调 Input.ResetInputAxes()，OnGUI 里读按键永远是「未按下」。
-    private const float DragThreshold = 3f; // 逻辑像素；小于它算点击，不算拖动
+    private const float DragThreshold = 3f;
 
-    private bool _isDraggingWindow; // 这次按下是否落在窗口空白处（可以拖）
-    private bool _isDragStarted;    // 位移已超过阈值，真正开始移动窗口
-
+    private bool _isDraggingWindow;
+    private bool _isDragStarted;
+    private int _windowDragControlId;
+    private float _dragScale;
     private Vector2 _dragStartMousePosition;
     private Vector2 _dragStartWindowPosition;
 
-    /// <summary>
-    ///     代替 GUI.DragWindow()。它按 Event.delta 移动窗口，而 delta 是屏幕像素、
-    ///     窗口矩形却在缩放后的逻辑坐标里，高倍率下窗口会跑得比鼠标快。
-    ///     这里全程用 IMGUI 事件的坐标（OnGUI 里已经是 GUI.matrix 换算后的逻辑坐标，
-    ///     和 _windowRect 同一套，所以不用再除以倍数）。
-    ///
-    ///     关键是**拖动状态必须能可靠结束**，否则会「飘」：
-    ///     - 用 rawType 判断 MouseUp，不能用 type。控件命中 MouseUp 时会 Event.Use()，
-    ///       type 变成 Used，只看 type 就会漏掉，状态一直挂着；之后随便点一下（鼠标
-    ///       抖动一两像素就会发 MouseDrag），窗口按「旧锚点 → 当前位置」的大位移瞬移，
-    ///       再被 Clamp 一夹，看起来就是直接飞到屏幕角落。
-    ///     - 鼠标在窗口外松开时根本收不到 MouseUp，靠 MouseMove（只在无按键时才发）兜底。
-    ///     - 每次按下都重新锚定，绝不复用上一轮的坐标。
-    /// </summary>
-    private void HandleWindowDragEvents()
+    private void EndWindowDrag()
+    {
+        if (_isDraggingWindow && GUIUtility.hotControl == _windowDragControlId)
+            GUIUtility.hotControl = 0;
+
+        _isDraggingWindow = false;
+        _isDragStarted = false;
+        _windowDragControlId = 0;
+    }
+
+    private void HandleWindowDragEvents(float scale)
     {
         var current = Event.current;
 
-        // 左键按下：重新锚定，先当作「未开始拖」，等窗口函数确认点在空白处
         if (current.rawType == EventType.MouseDown && current.button == 0)
-        {
-            _dragStartMousePosition = current.mousePosition;
-            _dragStartWindowPosition = _windowRect.position;
-            _isDraggingWindow = false;
-            _isDragStarted = false;
-        }
-
-        // 松手就结束。rawType 能穿透 Event.Use()，控件吃掉的 MouseUp 也照样能收到
-        if (current.rawType == EventType.MouseUp)
-        {
-            _isDraggingWindow = false;
-            _isDragStarted = false;
-            return;
-        }
-
-        // 无按键时 Unity 才会发 MouseMove：说明刚才在窗口外松手了
-        if (current.rawType == EventType.MouseMove)
-        {
-            _isDraggingWindow = false;
-            _isDragStarted = false;
-            return;
-        }
+            EndWindowDrag();
 
         if (!_isDraggingWindow) return;
 
-        // 只在 MouseDrag 里更新位置：Layout / Repaint 时 mousePosition 不可靠
+        if (GUIUtility.hotControl != _windowDragControlId || !Mathf.Approximately(scale, _dragScale))
+        {
+            EndWindowDrag();
+            return;
+        }
+
+        if (current.rawType == EventType.MouseUp && current.button == 0)
+        {
+            EndWindowDrag();
+            current.Use();
+            return;
+        }
+
         if (current.type != EventType.MouseDrag || current.button != 0) return;
 
-        var offset = current.mousePosition - _dragStartMousePosition;
+        var offset = GUIUtility.GUIToScreenPoint(current.mousePosition) - _dragStartMousePosition;
+        current.Use();
 
-        // 没超过阈值就当作点击，窗口不动（否则手抖一下窗口就漂）
         if (!_isDragStarted)
         {
             if (offset.sqrMagnitude < DragThreshold * DragThreshold) return;
             _isDragStarted = true;
         }
 
-        _windowRect.position = _dragStartWindowPosition + offset;
+        _windowRect.position = _dragStartWindowPosition + offset / _dragScale;
     }
 
-    /// <summary>
-    ///     在窗口函数末尾调用。控件处理过的 MouseDown 会被 Event.Use() 变成 Used，
-    ///     只有点在空白处才还是 MouseDown，据此区分「点按钮」和「拖窗口」。
-    ///     （不能用 GUIUtility.hotControl 判断，窗口自己会占住它。）
-    /// </summary>
     private void BeginWindowDragIfNeeded()
     {
+        var controlId = GUIUtility.GetControlID(PluginInfo.WindowID, FocusType.Passive);
         var current = Event.current;
-        if (current.rawType != EventType.MouseDown || current.button != 0) return;
-        if (current.type != EventType.MouseDown) return; // 已被某个控件吃掉
+        if (!_isVisible || current.type != EventType.MouseDown || current.button != 0) return;
+        if (!new Rect(0f, 0f, _windowRect.width, _windowRect.height).Contains(current.mousePosition)) return;
 
         _isDraggingWindow = true;
         _isDragStarted = false;
-        _dragStartMousePosition = current.mousePosition;
+        _windowDragControlId = controlId;
+        _dragScale = UserConfig.ClampUiScale(UserConfig.Instance.UiScale);
+        _dragStartMousePosition = GUIUtility.GUIToScreenPoint(current.mousePosition);
         _dragStartWindowPosition = _windowRect.position;
+        GUIUtility.hotControl = controlId;
+        current.Use();
+    }
+
+    private void ClampWindowPosition(float scale)
+    {
+        var screenWidth = Screen.width / scale;
+        var screenHeight = Screen.height / scale;
+        var visibleWidth = Mathf.Min(_windowRect.width, GuiStyles.ControlHeight * 4f);
+        var visibleHeight = Mathf.Min(_windowRect.height, GuiStyles.ControlHeight);
+
+        _windowRect.x = Mathf.Clamp(_windowRect.x, visibleWidth - _windowRect.width,
+            Mathf.Max(0f, screenWidth - visibleWidth));
+        _windowRect.y = Mathf.Clamp(_windowRect.y, 0f, Mathf.Max(0f, screenHeight - visibleHeight));
     }
 
     public void OnGUI()
     {
         if (!_isVisible)
         {
-            _isDraggingWindow = false;
+            EndWindowDrag();
             return;
         }
 
-        // 用 GUI.matrix 整体缩放：窗口、字号、间距、贴图一起放大，不用逐个改布局常量
         var scale = UserConfig.ClampUiScale(UserConfig.Instance.UiScale);
+        HandleWindowDragEvents(scale);
+
         var previousMatrix = GUI.matrix;
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(scale, scale, 1f)) *
                      previousMatrix;
         try
         {
-            // 逻辑（未缩放）屏幕尺寸，后面所有坐标都在这个空间里
-            var screenWidth = Screen.width / scale;
-            var screenHeight = Screen.height / scale;
-
-            // 拖动要在 GUI.Window 之前生效，它用的是传进去的矩形
-            HandleWindowDragEvents();
-
-            // Calculate the new window size
-            float newWidth = 800;
-            float newHeight = 600;
-
+            GUI.WindowFunction windowFunction = GuiFunc;
             if (_isShowSetting)
             {
-                // Update the windowRect size
-                _windowRect.width = newWidth;
-                _windowRect.height = newHeight;
-
-                // Ensure that the window doesn't go off the screen
-                _windowRect.x = Mathf.Clamp(_windowRect.x, 0, Mathf.Max(0f, screenWidth - newWidth));
-                _windowRect.y = Mathf.Clamp(_windowRect.y, 0, Mathf.Max(0f, screenHeight - newHeight));
-
-                _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect,
-                    GuiSettingFunc, "PropMyItem " + PluginInfo.PluginVersion,
-                    GuiStyles.WindowStyle);
-                return;
+                _windowRect.width = 300f;
+                windowFunction = GuiSettingFunc;
             }
-
-            if (_isShowFilterSetting)
+            else if (_isShowFilterSetting)
             {
-                // Update the windowRect size
-                _windowRect.width = newWidth;
-                _windowRect.height = newHeight;
-
-                // Ensure that the window doesn't go off the screen
-                _windowRect.x = Mathf.Clamp(_windowRect.x, 0, Mathf.Max(0f, screenWidth - newWidth));
-                _windowRect.y = Mathf.Clamp(_windowRect.y, 0, Mathf.Max(0f, screenHeight - newHeight));
-
-                _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect,
-                    GuiFilterSettingFunc, "PropMyItem " + PluginInfo.PluginVersion,
-                    GuiStyles.WindowStyle);
-                return;
+                _windowRect.size = new Vector2(800f, 600f);
+                windowFunction = GuiFilterSettingFunc;
             }
 
-            // Update the windowRect size
-            _windowRect.width = newWidth;
-            _windowRect.height = newHeight;
-
-            // Ensure that the window doesn't go off the screen
-            _windowRect.x = Mathf.Clamp(_windowRect.x, 0, Mathf.Max(0f, screenWidth - newWidth));
-            _windowRect.y = Mathf.Clamp(_windowRect.y, 0, Mathf.Max(0f, screenHeight - newHeight));
-
-            _windowRect = GUI.Window(PluginInfo.WindowID, _windowRect, GuiFunc,
+            ClampWindowPosition(scale);
+            var windowRect = GUI.Window(PluginInfo.WindowID, _windowRect, windowFunction,
                 "PropMyItem " + PluginInfo.PluginVersion, GuiStyles.WindowStyle);
+            _windowRect.position = windowRect.position;
         }
         finally
         {
-            // 不还原会影响游戏自己的 IMGUI 绘制
             GUI.matrix = previousMatrix;
+            if (!_isVisible) EndWindowDrag();
         }
+    }
+
+    public void OnApplicationFocus(bool hasFocus)
+    {
+        if (!hasFocus) EndWindowDrag();
+    }
+
+    public void OnDisable()
+    {
+        EndWindowDrag();
     }
 
     public void OnApplicationQuit()
@@ -566,6 +537,7 @@ public class PropMyItem : BaseUnityPlugin
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
     {
+        EndWindowDrag();
         _sceneLevel = scene.buildIndex;
     }
 
@@ -583,7 +555,7 @@ public class PropMyItem : BaseUnityPlugin
             var mousePosition = new Vector2(Input.mousePosition.x / scale,
                 (Screen.height - Input.mousePosition.y) / scale);
 
-            if (_isVisible && _windowRect.Contains(mousePosition))
+            if (_isVisible && (_isDraggingWindow || _windowRect.Contains(mousePosition)))
             {
                 GameMain.Instance.MainCamera.SetControl(false);
                 if (Event.current.type != EventType.KeyDown &&
